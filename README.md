@@ -216,7 +216,7 @@ luarocks install luafilesystem
 resty -e "require 'lfs' "
 ```
 
-*注意事项： 如果不能访问外网的话，请编译安装luafilesystem, 见luafilesystem github下载， 然后修改config文件， make && make install，这个时候就不需要按照luarocks，可省略Luarocks安装步骤。* 
+*注意事项： 如果不能访问外网的话，请编译安装luafilesystem, 见luafilesystem github下载， 然后修改config文件， make && make install，这个时候就不需要安装luarocks，可省略Luarocks安装步骤。* 
 
 ## NgRouter安装说明
 - NgRouter采用编译安装，非常简单
