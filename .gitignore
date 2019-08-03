@@ -1,0 +1,8 @@
+.idea
+logs
+*.iws
+*.iml
+*.ipr
+*.DS_Store
+*.log
+*.pid

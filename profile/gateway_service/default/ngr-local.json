@@ -1,0 +1,137 @@
+{
+  "profile": "local",
+  "service_name":"GatewayService",
+  "cluster_node_count" : 1,
+  "load_conf_delay" : 0,
+  "load_conf_interval" : 3,
+  "load_ext_conf_interval" : 60,
+  "plugins": [
+    "global_rate_limit",
+    "api_router",
+    "group_rate_limit",
+    "property_rate_limit",
+    "stat_dashboard",
+    "waf",
+    "anti_sql_injection",
+    "statsd_metrics",
+    "global_access_control"
+  ],
+  "store_type": "mysql",
+  "store_mysql": {
+    "connect_config": {
+      "host": "127.0.0.1",
+      "port": 3306,
+      "database": "ngr",
+      "user": "ngr_local",
+      "password": "123456",
+      "max_packet_size": 1048576
+    },
+    "pool_config": {
+      "max_idle_timeout": 10000,
+      "pool_size": 3
+    },
+    "timeout": 5000,
+    "desc": "mysql configuration"
+  },
+  "cache_type":"redis",
+  "cache_redis":{
+    "mode":"standalone",
+    "connect_timeout":500,
+    "read_timeout": 2000,
+    "database":0,
+    "max_idle_time":1000,
+    "pool_size":20,
+    "host":"127.0.0.1",
+    "port":"6379"
+  },
+  "metrics_conf" : {
+    "host" : "127.0.0.1",
+    "port" : 8125,
+    "prefix" : "ngr"
+  },
+  "http_client":{
+    "timeout":2000,
+    "max_idle_timeout":6000,
+    "pool_size":200
+  },
+  "application_conf":{
+    "service_type":"gateway_service",
+    "hosts":["gateway.local","127.0.0.1","localhost"],
+    "log_level": "error",
+    "access_log": "/var/log/ngr/gateway.local.access.log",
+    "error_log":"/var/log/ngr/gateway.local.error.log",
+    "worker_processes_count":"2",
+    "event_mode": "kqueue",
+    "worker_rlimit":"65535",
+    "worker_connections":"65535",
+    "dns_resolver":["10.0.146.215"],
+    "dns_resolver_valid":"300s",
+    "resolver_timeout":"3s",
+    "lua_code_cache":"on",
+    "lua_socket_pool_size":"20",
+    "rate_limit_counter_cache_data_size":"20m",
+    "global_config_cache_data_size":"100m",
+    "stat_dashboard_data_size":"2m",
+    "shared_dict_lock_data_size":"10m",
+    "worker_events_data_size":"20m",
+    "healthchecks_data_size":"20m",
+    "lua_max_pending_timers":"16384",
+    "lua_max_running_timers":"4096",
+    "real_ip_header":"X-Forwarded-For",
+    "real_ip_recursive":"on",
+    "trusted_ips":["112.124.159.0/24","116.211.163.0/24","116.211.164.0/24"],
+    "hosts_conf": [
+      {
+        "host": "gateway.local",
+        "log_level":"error",
+        "access_log":"/var/log/ngr/gateway.local.access.log",
+        "error_log":"/var/log/ngr/gateway.local.error.log",
+        "non_body":"true",
+        "listen_port":80,
+        "error_page_switch":"off",
+        "open_ssl":"off",
+        "ssl_certificate":"",
+        "ssl_certificate_key":"",
+        "add_headers":[],
+        "proxy_intercept_errors":"off",
+        "error_page_code":"400 404 408 411 412 413 414 417 500 502 503 504",
+        "proxy_next_upstream":"error timeout invalid_header http_503 http_404 http_502 http_504 non_idempotent",
+        "non_idempotent_retry_switch":"off"
+      },
+      {
+        "host": "127.0.0.1",
+        "log_level":"error",
+        "access_log":"/var/log/ngr/127.0.0.1.access.log",
+        "error_log":"/var/log/ngr/127.0.0.1.error.log",
+        "non_body":"true",
+        "listen_port":80,
+        "error_page_switch":"off",
+        "open_ssl":"off",
+        "ssl_certificate":"",
+        "ssl_certificate_key":"",
+        "add_headers":[],
+        "proxy_intercept_errors":"off",
+        "error_page_code":"400 404 408 411 412 413 414 417 500 502 503 504",
+        "proxy_next_upstream":"error timeout invalid_header http_503 http_404 http_502 http_504 non_idempotent",
+        "non_idempotent_retry_switch":"off"
+      },
+      {
+        "host": "localhost",
+        "log_level":"error",
+        "access_log":"/var/log/ngr/localhost.access.log",
+        "error_log":"/var/log/ngr/localhost.error.log",
+        "non_body":"true",
+        "listen_port":80,
+        "error_page_switch":"off",
+        "open_ssl":"off",
+        "ssl_certificate":"",
+        "ssl_certificate_key":"",
+        "add_headers":[],
+        "proxy_intercept_errors":"off",
+        "error_page_code":"400 404 408 411 412 413 414 417 500 502 503 504",
+        "proxy_next_upstream":"error timeout invalid_header http_503 http_404 http_502 http_504 non_idempotent",
+        "non_idempotent_retry_switch":"off"
+      }
+    ]
+  }
+}

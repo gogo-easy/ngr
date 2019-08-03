@@ -1,0 +1,61 @@
+{
+  "profile" :"test",
+  "plugins": [
+    "global_rate_limit",
+    "api_router",
+    "group_rate_limit",
+    "property_rate_limit",
+    "stat_dashboard",
+    "waf",
+    "anti_sql_injection",
+    "statsd_metrics",
+    "global_access_control"
+  ],
+  "store_type": "mysql",
+  "store_mysql": {
+    "connect_config": {
+      "host": "10.0.21.221",
+      "port": 3306,
+      "database": "ngr",
+      "user": "mw_capi_dev",
+      "password": "bboiNwrsm9jwc",
+      "max_packet_size": 1048576
+    },
+    "pool_config": {
+      "max_idle_timeout": 10000,
+      "pool_size": 3
+    },
+    "timeout": 5000,
+    "desc": "mysql configuration"
+  },
+  "cache_type":"redis",
+  "cache_redis":{
+    "mode":"standalone",
+    "connect_timeout":500,
+    "read_timeout": 2000,
+    "database":0,
+    "max_idle_time":1000,
+    "pool_size":40,
+    "host":"10.0.19.196",
+    "port":"6379"
+  },
+  "application_conf":{
+    "service_type":"config_service",
+    "worker_processes_count":"auto",
+    "event_mode": "epoll",
+    "worker_rlimit":"65535",
+    "worker_connections":"65535",
+    "dns_resolver":["10.0.146.215"],
+    "dns_resolver_valid":"300s",
+    "resolver_timeout":"60s",
+    "lua_code_cache":"on",
+    "lua_socket_pool_size":"30",
+    "lua_max_pending_timers":"16384",
+    "lua_max_running_timers":"4096",
+    "real_ip_header":"X-Forwarded-For",
+    "real_ip_recursive":"on",
+    "trusted_ips":["112.124.159.0/24","116.211.163.0/24"],
+    "cmdb_url":"http://test.cmdb.mwbyd.cn",
+    "cmdb_env":"test"
+  }
+}
