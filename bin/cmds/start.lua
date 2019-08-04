@@ -1,6 +1,7 @@
 local ngx_handle = require("bin.utils.ngx_handle")
 local logger = require("bin.utils.logger")
 local init_conf = require("bin.initconf.init_conf")
+local pl_path = require("pl.path")
 
 local function new_handler(args)
     args.necessary_dirs ={ -- runtime nginx conf/pid/logs dir

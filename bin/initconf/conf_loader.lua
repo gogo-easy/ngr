@@ -7,17 +7,15 @@ local pl_path = require "pl.path"
 local tablex = require "pl.tablex"
 local logger = require "bin.utils.logger"
 local json = require("core.utils.json")
+local unpack = unpack
 
 
 local PREFIX_PATHS = {
   nginx_pid = {"pids", "nginx.pid"},
   nginx_err_logs = {"logs", "error.log"},
   nginx_acc_logs = {"logs", "access.log"},
-  --nginx_admin_acc_logs = {"logs", "admin_access.log"},
   nginx_conf = {"conf/nginx.conf"}
   ;
- -- kong_env = {".ngr_env"}
-  --;
 }
 
 -- By default, all properties in the configuration are considered to

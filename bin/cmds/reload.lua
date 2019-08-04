@@ -52,7 +52,8 @@ function _M.execute(origin_args)
         args.prefix = "/usr/local/ngr"
     end
     if not args.ngr_conf then
-        args.ngr_conf = args.prefix .. "/conf/ngr.json" end
+        args.ngr_conf = args.prefix .. "/conf/ngr.json"
+    end
 
     args.ngx_conf = args.prefix .. "/conf/nginx.conf"
 

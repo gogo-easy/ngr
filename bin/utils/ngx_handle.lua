@@ -1,4 +1,9 @@
 local logger = require("bin.utils.logger")
+local pairs = pairs
+local os = os
+local error = error
+local string_format = string.format
+local setmetatable =  setmetatable
 
 local function create_dirs(necessary_dirs)
     if necessary_dirs then
@@ -14,17 +19,27 @@ local function ngx_command(args)
         os.exit(1)
     end
 
-    local ngr_conf, prefix, ngx_conf, ngx_signal = "", "", "", ""
-    if args.ngr_conf ~= nil then ngr_conf = "NGR_CONF=" .. args.ngr_conf .. " " end
-    if args.prefix then prefix = "-p " .. args.prefix end
-    if args.ngx_conf then ngx_conf = "-c " .. args.ngx_conf end
+    local prefix, ngx_conf, ngx_signal =  "", "", ""
+    local logger_info = ""
+    if args.ngr_conf ~= nil and args.ngx_signal ~= "reload" and args.ngx_signal ~= "stop" then
+        logger_info = logger_info .. "CONF=" .. args.ngr_conf .. " "
+    end
+    if args.prefix then
+        prefix = "-p " .. args.prefix
+        logger_info = logger_info .. "PREFIX=" .. args.prefix
+    end
+    if args.ngx_conf then
+        ngx_conf = "-c " .. args.ngx_conf
+    end
     -- ngx master signal
-    if args.ngx_signal then ngx_signal = "-s " .. args.ngx_signal end
+    if args.ngx_signal then
+        ngx_signal = "-s " .. args.ngx_signal
+    end
 
 
-    -- local cmd = string.format("nginx %s %s %s %s", ngr_conf, prefix, ngx_conf, ngx_signal)
-    local cmd = string.format("%snginx %s %s %s", ngr_conf, prefix, ngx_conf, ngx_signal)
-    logger:info(cmd)
+    local cmd = string_format("nginx %s %s %s", prefix, ngx_conf, ngx_signal)
+    local execute_logger = string_format("Using Parameters: %s", logger_info)
+    logger:info(execute_logger)
     return os.execute(cmd)
 end
 

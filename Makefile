@@ -1,10 +1,9 @@
-profile ?= local
+ profile ?= local
 app_name ?= default
 TO_INSTALL = admin_api bin conf profile core lor lualib plugins
 NGR_HOME ?= /usr/local/ngr
 NGR_BIN ?= /usr/local/bin/ngr
 NGR_HOME_PATH = $(subst /,\\/,$(NGR_HOME))
-
 
 NGR_ADMIN_HOME ?= /usr/local/ngrAdmin
 NGR_ADMIN_BIN ?= /usr/local/bin/ngrAdmin
@@ -36,13 +35,11 @@ install-admin:
 		cp -a $$item $(NGR_ADMIN_HOME)/; \
 	done;
 
-	@if test ! -f "$(NGR_ADMIN_HOME)/profile/config_service/ngr-$(profile).json"; \
+	@if test -f "$(NGR_ADMIN_HOME)/profile/config_service/ngr-$(profile).json"; \
 	then \
-		echo "NgRouter admin api server 's configuration file does not exist, the profile is $(profile),please check..."; \
-		exit "1"; \
+		mv $(NGR_ADMIN_HOME)/profile/config_service/ngr-$(profile).json $(NGR_ADMIN_HOME)/conf/ngr.json; \
 	fi
 
-	@mv $(NGR_ADMIN_HOME)/profile/config_service/ngr-$(profile).json $(NGR_ADMIN_HOME)/conf/ngr.json
 	@rm -r $(NGR_ADMIN_HOME)/profile
 
 	@echo "#!/usr/bin/env resty" >> $(NGR_ADMIN_BIN)
@@ -73,13 +70,11 @@ install:
 		cp -a $$item $(NGR_HOME)/; \
 	done;
 
-	@if test ! -f "$(NGR_HOME)/profile/gateway_service/$(app_name)/ngr-$(profile).json"; \
+	@if test -f "$(NGR_HOME)/profile/gateway_service/$(app_name)/ngr-$(profile).json"; \
 	then \
-		echo "$(app_name) gateway service configuration file does not exist, the profile is $(profile),please check..."; \
-		exit "1"; \
+		mv $(NGR_HOME)/profile/gateway_service/$(app_name)/ngr-$(profile).json $(NGR_HOME)/conf/ngr.json; \
 	fi
 
-	@mv $(NGR_HOME)/profile/gateway_service/$(app_name)/ngr-$(profile).json $(NGR_HOME)/conf/ngr.json
 	@rm -r $(NGR_HOME)/profile
 
 	@echo "#!/usr/bin/env resty" >> $(NGR_BIN)

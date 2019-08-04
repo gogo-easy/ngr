@@ -3,6 +3,7 @@ local full_version = server_info.full_name
 local version = server_info.version
 local args_util = require("bin.utils.args_util")
 local logger = require("bin.utils.logger")
+local pl_path = require("pl.path")
 local ngx = ngx
 local jit = jit
 
@@ -65,7 +66,10 @@ local function exec(args)
         args.prefix = "/usr/local/ngrAdmin"
     end
     if not args.conf then
-        args.conf = args.prefix .. "/conf/ngr.json"
+        args.conf = "/etc/ngrAdmin/ngr.json"
+        if not pl_path.exists(args.conf) then
+            args.conf = args.prefix .. "/conf/ngr.json"
+        end
     end
 
     logger:info("ngr_admin: %s", version)

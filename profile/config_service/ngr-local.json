@@ -48,7 +48,7 @@
     "dns_resolver":["10.0.146.215","10.1.20.18","10.1.20.86"],
     "dns_resolver_valid":"300s",
     "resolver_timeout":"60s",
-    "lua_code_cache":"off",
+    "lua_code_cache":"on",
     "lua_socket_pool_size":"20",
     "lua_max_pending_timers":"16384",
     "lua_max_running_timers":"4096",
