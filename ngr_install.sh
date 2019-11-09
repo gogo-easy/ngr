@@ -1,17 +1,26 @@
 # Install dependencies
+echo ''
+echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
 echo 'Start to install dependencies'
 echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+echo ''
 yum install -y pcre-devel openssl-devel gcc
 
 # Add yum repo
+echo ''
+echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
 echo 'Start to config yum repo'
 echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+echo ''
 yum -y install yum-utils
 yum-config-manager --add-repo https://openresty.org/package/rhel/openresty.repo
 
 # Install Openresty
+echo ''
+echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
 echo 'Start to install openresty'
 echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+echo ''
 yum -y install unzip
 yum -y install openresty
 yum -y install openresty-resty
@@ -26,8 +35,11 @@ resty -v
 openresty -v
 
 # Install luarock
+echo ''
+echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
 echo 'Start to install luarock'
 echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+echo ''
 wget http://luarocks.github.io/luarocks/releases/luarocks-3.2.1.tar.gz
 tar -xzf luarocks-3.2.1.tar.gz
 cd luarocks-3.2.1/
@@ -39,9 +51,21 @@ cd luarocks-3.2.1/
 make build
 make install
 ln -s /usr/local/openresty/luajit/bin/luarocks /usr/local/bin/luarocks
+cd ..
 
 # Install luafilesystem by luarocks
+echo ''
+echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+echo 'Start to install luafilesystem'
+echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+echo ''
 luarocks install luafilesystem
 
 # Install ngr
-#wget 
+echo ''
+echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+echo 'Start to install ngr'
+echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+echo ''
+make install
+make install-admin
