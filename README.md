@@ -44,6 +44,7 @@ NgRouter部分模块使用redis做临时缓存和计数等功能
 ## 贡献者
 - [@Fijian](https://github.com/jacobslei)
 - [@yearyeardiff](https://github.com/yearyeardiff)
+- [@liverpool8056](https://github.com/liverpool8056)
 
 
 ## Wiki
