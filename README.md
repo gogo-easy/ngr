@@ -1,10 +1,10 @@
-# NgRouter - A pratical API Gateway
+# NgRouter - A Pratical API Gateway
 
 NgRouter是基于OpenResty开发的API网关，继承了Openresty的高并发、低延迟的强大性能的同时，也提供诸如认证鉴权、限流、熔断、健康检查、动态上游发现等常用功能。通过集群化横向扩展多实例的部署方式，可作为企业级边缘网关承载百万级并发，也可根据环境的逻辑划分，每个逻辑单元部署一套，用于需要多环境管理的场景。
 
 
 
-NgRouter is an enterprise-class API gateway based on Openresty. Compared to Openresty, it has almostly the same performance of on high concurrency and low latency, it also has a lot of common practical fuctions such as authentication of requests, dynamically upstream lists, health check, rate limiting, fault torlerance etc. NgRouter can be deployed in single -node mode (usually for experiment), and can be scaled to multi-cluster mode, each cluster is dedicated for a logical environment. This makes it very suitable for the cases of multi-environment.
+NgRouter is an enterprise-class API gateway based on Openresty. Compared to Openresty, it has almostly the same performance of high concurrency and low latency, it also has a lot of common practical functions such as authentication of requests, dynamically upstream lists, health check, rate limiting, fault torlerance,  etc. NgRouter can be deployed in single -node mode (usually for experiment), and can be scaled to multi-cluster mode, each cluster is dedicated for a logical environment. This makes it very suitable for the cases of multi-environment.
 
 更多关于NgRouter的详细介绍请参见[NgRouter Docs](https://github.com/gogo-easy/ngr/wiki)
 
