@@ -81,7 +81,7 @@ NgRouter is an enterprise-class API gateway based on Openresty. Compared to Open
 
 ## License
 
-The project is licensed by Apache 2.0
+The project is licensed by [Apache 2.0](https://github.com/gogo-easy/ngr/blob/master/LICENSE)
 
 [ngr-logo]: logo/hoot1.png
 [ngr-url]: https://github.com/gogo-easy/ngr

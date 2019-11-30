@@ -68,6 +68,8 @@ rpm -ivh ngr-1.0.0-1.el7.centos.x86_64.rpm
 
 ### 配置数据库连接信息
 
+/ngr.json
+
 ## 启动NgRouter
 
 ### 创建日志目录
