@@ -14,7 +14,7 @@ NgRouter is an enterprise-class API gateway based on Openresty. Compared to Open
 
 ## 管理页面截图
 
-
+![preview](/Users/robin/Documents/rd/projects/ngr/logo/preview.png)
 
 ## Feature
 
