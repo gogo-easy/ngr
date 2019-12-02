@@ -66,7 +66,7 @@ NgRouter is an enterprise-class API gateway based on Openresty. Compared to Open
 
 ## Deployment
 
-- [Quick Start](https://github.com/gogo-easy/ngr/wiki/NgRouter%E5%AE%89%E8%A3%85%E8%AF%B4%E6%98%8E)
+- [Quick Start](https://github.com/gogo-easy/ngr/wiki/How-to-install-NgRouter(%E5%AE%89%E8%A3%85%E8%AF%B4%E6%98%8E))
 
 ## Release
 
