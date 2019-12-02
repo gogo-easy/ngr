@@ -72,14 +72,6 @@ sudo rpm -ivh ngr-1.0.0-1.el7.centos.x86_64.rpm
 
 ## 启动NgRouter
 
-### 创建日志目录
-
-NgRouter的日志文件默认路径为/var/log/ngr/，该目录在安装时并未自动创建（后续将优化），需要在启动前手动创建：
-
-```shell
-mkdir -p /var/log/ngr
-```
-
 ### 执行启动命令
 
 ```shell

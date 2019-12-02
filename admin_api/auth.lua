@@ -1,8 +1,3 @@
----
---- 功能：权限验证
---- Created by: yusai.
---- DateTime: 2018/5/3
----
 local user_dao = require("core.dao.admin_user_dao")
 local decode_base64 = ngx.decode_base64
 local resty_sha256 = require("resty.sha256")
