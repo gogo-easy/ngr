@@ -3,10 +3,12 @@ app_name ?= default
 TO_INSTALL = admin_api bin conf profile core lor lualib plugins
 NGR_HOME ?= /usr/local/ngr
 NGR_BIN ?= /usr/local/bin/ngr
+NGR_LOG ?= /var/log/ngr
 NGR_HOME_PATH = $(subst /,\\/,$(NGR_HOME))
 
 NGR_ADMIN_HOME ?= /usr/local/ngrAdmin
 NGR_ADMIN_BIN ?= /usr/local/bin/ngrAdmin
+NGR_ADMIN_LOG ?= /var/log/ngrAdmin
 NGR_ADMIN_HOME_PATH = $(subst /,\\/,$(NGR_ADMIN_HOME))
 
 
@@ -29,6 +31,11 @@ install-admin:
 	@if test ! -e "$(NGR_ADMIN_HOME)"; \
 	then \
 		mkdir -p $(NGR_ADMIN_HOME); \
+	fi
+
+	@if test ! -e "$(NGR_ADMIN_LOG)"; \
+	then \
+		mkdir -p $(NGR_ADMIN_LOG); \
 	fi
 
 	@for item in $(TO_INSTALL) ; do \
@@ -64,6 +71,11 @@ install:
 	@if test ! -e "$(NGR_HOME)"; \
 	then \
 		mkdir -p $(NGR_HOME); \
+	fi
+	
+	@if test ! -e "$(NGR_LOG)"; \
+	then \
+		mkdir -p $(NGR_LOG); \
 	fi
 
 	@for item in $(TO_INSTALL) ; do \
