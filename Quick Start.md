@@ -17,7 +17,7 @@ NgRouter依赖的库为：perl >= 5.6.1、libpcre、libssl
 对于CentOS系统，可以使用yum方式安装：
 
 ```shell
-yum -y install perl pcre-devel openssl-devel
+sudo yum -y install perl pcre-devel openssl-devel
 ```
 
 ### 1.4 安装包准备
@@ -51,7 +51,7 @@ source /localpath/sql/init.sql
 通过源码包安装要求安装环境可以连接公网，执行ngr_install.sh安装脚本即可：
 
 ```shell
-sh ngr_install.sh
+sudo sh ngr_install.sh
 ```
 
 #### 通过离线RPM包安装
@@ -59,7 +59,7 @@ sh ngr_install.sh
 通过rpm命令来安装离线RPM包：
 
 ```shell
-rpm -ivh ngr-1.0.0-1.el7.centos.x86_64.rpm
+sudo rpm -ivh ngr-1.0.0-1.el7.centos.x86_64.rpm
 ```
 
 #### 通过在线RPM包安装
@@ -68,19 +68,39 @@ rpm -ivh ngr-1.0.0-1.el7.centos.x86_64.rpm
 
 ### 配置数据库连接信息
 
+在/usr/local/ngr/conf/ngr.json中，找到**store_mysql**部分及**cache_redis**部分，并修改MySQL及Redis的正确配置信息。
+
 ## 启动NgRouter
 
 ### 创建日志目录
 
+NgRouter的日志文件默认路径为/var/log/ngr/，该目录在安装时并未自动创建（后续将优化），需要在启动前手动创建：
+
+```shell
+mkdir -p /var/log/ngr
+```
+
 ### 执行启动命令
 
 ```shell
-ngr start
+sudo ngr start
 ```
 
-输出一下信息，说明启动成功：
+输出如下信息，说明启动成功：
 
 ```shell
-
+$sudo ngr start
+[INFO] NgrRouter: 1.0
+[INFO] ngx_lua: 10008
+[INFO] nginx: 1011002
+[INFO] Lua: LuaJIT 2.1.0-beta2
+[INFO] args:
+[INFO] 	 ngx_conf:/usr/local/ngr/conf/nginx.conf
+[INFO] 	 ngr_conf:/etc/ngr/ngr.json
+[INFO] 	 prefix:/usr/local/ngr
+[INFO] Reading config file at /etc/ngr/ngr.json
+[INFO] Generating nginx.conf from /etc/ngr/ngr.json.
+[INFO] Starting NgrRouter......
+[INFO] Using Parameters: CONF=/etc/ngr/ngr.json PREFIX=/usr/local/ngr
+[SUCCESS] NgrRouter started.
 ```
-
