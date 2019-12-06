@@ -42,10 +42,10 @@
   "application_conf":{
     "service_type":"config_service",
     "worker_processes_count":"auto",
-    "event_mode": "kqueue",
+    "event_mode": "epoll",
     "worker_rlimit":"65535",
     "worker_connections":"65535",
-    "dns_resolver":["10.0.146.215","10.1.20.18","10.1.20.86"],
+    "dns_resolver":["8.8.8.8"],
     "dns_resolver_valid":"300s",
     "resolver_timeout":"60s",
     "lua_code_cache":"on",
@@ -53,9 +53,6 @@
     "lua_max_pending_timers":"16384",
     "lua_max_running_timers":"4096",
     "real_ip_header":"X-Forwarded-For",
-    "real_ip_recursive":"on",
-    "trusted_ips":["112.124.159.0/24","116.211.163.0/24"],
-    "cmdb_url":"http://test.cmdb.mwbyd.cn",
-    "cmdb_env":"test"
+    "real_ip_recursive":"on"
   }
 }
