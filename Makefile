@@ -1,13 +1,14 @@
- profile ?= local
+profile ?= local
 app_name ?= default
 TO_INSTALL = admin_api bin conf profile core lor lualib plugins
 NGR_HOME ?= /usr/local/ngr
 NGR_BIN ?= /usr/local/bin/ngr
-NGR_BIN_DIR ?= /usr/local/bin/
+NGR_LOG ?= /var/log/ngr
 NGR_HOME_PATH = $(subst /,\\/,$(NGR_HOME))
 
 NGR_ADMIN_HOME ?= /usr/local/ngrAdmin
 NGR_ADMIN_BIN ?= /usr/local/bin/ngrAdmin
+NGR_ADMIN_LOG ?= /var/log/ngrAdmin
 NGR_ADMIN_HOME_PATH = $(subst /,\\/,$(NGR_ADMIN_HOME))
 
 
@@ -32,6 +33,12 @@ install-admin:
 		mkdir -p $(DESTDIR)$(NGR_ADMIN_HOME); \
 	fi
 
+	@if test ! -e "$(DESTDIR)$(NGR_ADMIN_LOG)"; \
+	then \
+		mkdir -p $(DESTDIR)$(NGR_ADMIN_LOG); \
+		touch $(DESTDIR)$(NGR_ADMIN_LOG)/access.log; \
+	fi
+
 	@for item in $(TO_INSTALL) ; do \
 		cp -a $$item $(DESTDIR)$(NGR_ADMIN_HOME)/; \
 	done;
@@ -52,8 +59,6 @@ install-admin:
 	#$(DESTDIR)$(NGR_ADMIN_BIN) help
 
 install:
-        
-
 	@rm -rf $(DESTDIR)$(NGR_BIN)
 	@rm -rf $(DESTDIR)$(NGR_HOME)/admin_api
 	@rm -rf $(DESTDIR)$(NGR_HOME)/bin
@@ -64,15 +69,15 @@ install:
 	@rm -rf $(DESTDIR)$(NGR_HOME)/lualib
 	@rm -rf $(DESTDIR)$(NGR_HOME)/plugins
 
-
 	@if test ! -e "$(DESTDIR)$(NGR_HOME)"; \
 	then \
 		mkdir -p $(DESTDIR)$(NGR_HOME); \
 	fi
 
-	@if test ! -e "$(DESTDIR)$(NGR_BIN_DIR)"; \
+	@if test ! -e "$(DESTDIR)$(NGR_LOG)"; \
 	then \
-		mkdir -p $(DESTDIR)$(NGR_BIN_DIR); \
+		mkdir -p $(DESTDIR)$(NGR_LOG); \
+		touch $(DESTDIR)$(NGR_LOG)/access.log; \
 	fi
 
 	@for item in $(TO_INSTALL) ; do \
@@ -84,11 +89,9 @@ install:
 		mv $(DESTDIR)$(NGR_HOME)/profile/gateway_service/$(app_name)/ngr-$(profile).json $(DESTDIR)$(NGR_HOME)/conf/ngr.json; \
 	fi
 
-
 	@rm -r $(DESTDIR)$(NGR_HOME)/profile
 
 	@echo "#!/usr/bin/env resty" >> $(DESTDIR)$(NGR_BIN)
-	@echo "-----------------------start install---------------------"
 	@echo "package.path=\"$(NGR_HOME)/?.lua;$(NGR_HOME)/lualib/?.lua;;\" .. package.path" >> $(DESTDIR)$(NGR_BIN)
 	@echo "package.cpath=\"$(NGR_HOME)/lualib/?.so;;\" .. package.cpath">> $(DESTDIR)$(NGR_BIN)
 	@echo "require(\"bin.main\")(arg)" >> $(DESTDIR)$(NGR_BIN)
