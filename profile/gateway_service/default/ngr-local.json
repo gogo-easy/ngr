@@ -61,10 +61,10 @@
     "access_log": "/var/log/ngr/gateway.local.access.log",
     "error_log":"/var/log/ngr/gateway.local.error.log",
     "worker_processes_count":"2",
-    "event_mode": "kqueue",
+    "event_mode": "epoll",
     "worker_rlimit":"65535",
     "worker_connections":"65535",
-    "dns_resolver":["10.0.146.215"],
+    "dns_resolver":["8.8.8.8"],
     "dns_resolver_valid":"300s",
     "resolver_timeout":"3s",
     "lua_code_cache":"on",
@@ -79,7 +79,6 @@
     "lua_max_running_timers":"4096",
     "real_ip_header":"X-Forwarded-For",
     "real_ip_recursive":"on",
-    "trusted_ips":["112.124.159.0/24","116.211.163.0/24","116.211.164.0/24"],
     "hosts_conf": [
       {
         "host": "gateway.local",
