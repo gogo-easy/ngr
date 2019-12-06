@@ -1,4 +1,4 @@
- profile ?= local
+profile ?= local
 app_name ?= default
 TO_INSTALL = admin_api bin conf profile core lor lualib plugins
 NGR_HOME ?= /usr/local/ngr
@@ -36,7 +36,7 @@ install-admin:
 	@if test ! -e "$(DESTDIR)$(NGR_ADMIN_LOG)"; \
 	then \
 		mkdir -p $(DESTDIR)$(NGR_ADMIN_LOG); \
-		touch $(DESTDIR)$(NGR_ADMIN_LOG)/ngrAdmin.log; \
+		touch $(DESTDIR)$(NGR_ADMIN_LOG)/access.log; \
 	fi
 
 	@for item in $(TO_INSTALL) ; do \
@@ -77,7 +77,7 @@ install:
 	@if test ! -e "$(DESTDIR)$(NGR_LOG)"; \
 	then \
 		mkdir -p $(DESTDIR)$(NGR_LOG); \
-		touch $(DESTDIR)$(NGR_LOG)/ngr.log; \
+		touch $(DESTDIR)$(NGR_LOG)/access.log; \
 	fi
 
 	@for item in $(TO_INSTALL) ; do \
