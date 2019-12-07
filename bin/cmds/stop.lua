@@ -30,8 +30,8 @@ function _M.execute(origin_args)
         prefix = origin_args.prefix
     }
     for i, v in pairs(origin_args) do
-        if i ~= "c" and i ~= "p" and i ~= "conf" and i ~= "prefix" then
-            logger:error("Command stop option[name=%s] do not support.", i)
+        if i ~= "c" and i ~= "p" and i ~= "conf" and i ~= "prefix" and i ~= "d" and i ~= "daemon" then
+            logger:error("Command stop option[%s=%s] do not support.", i,v)
             return
         end
         if i == "c" and not args.ngr_conf then

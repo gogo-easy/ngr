@@ -177,7 +177,7 @@ end
 --- Load ngr configuration
 -- @param[type=string] conf_path (optional) Path to a configuration file.
 -- @treturn table A table holding a valid configuration.
-local function load(conf_path,prefix)
+local function load(conf_path,prefix,daemon)
 
   ---------------------
   -- Configuration file
@@ -233,6 +233,7 @@ local conf = from_file_conf
 
   conf.prefix = prefix
   conf.ngr_conf = conf_path
+  conf.daemon = daemon
 
   -- attach prefix files paths
   for property, t_path in pairs(PREFIX_PATHS) do

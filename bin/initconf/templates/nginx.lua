@@ -1,7 +1,7 @@
 return [[
 worker_processes ${{worker_processes_count}};
 worker_rlimit_nofile ${{worker_rlimit}};
-daemon on;
+daemon ${{daemon}};
 pid pids/nginx.pid;
 events {
     use ${{event_mode}};
