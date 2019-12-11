@@ -208,11 +208,10 @@ end
 -- req_info.api_group_context=""
 function _extractor.deal_req_info_for_group_context(api_group_info, req_info)
 
-    if(api_group_info and api_group_info.include_context
-            and tonumber(api_group_info.include_context) == 1) then
-        if(not stringy.endswith(req_info.api_group_context,"/")
+    if(api_group_info and api_group_info.enable_rewrite and tonumber(api_group_info.enable_rewrite) == 1) then
+        if(not stringy.endswith(req_info.rewrite_to,"/")
                 and req_info.path and req_info.path ~= "" ) then
-            req_info.api_group_context = req_info.api_group_context .. "/"
+            req_info.api_group_context = req_info.rewrite_to .. "/"
         end
 
         if(req_info.path and req_info.path ~= "") then

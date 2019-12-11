@@ -21,22 +21,23 @@ DROP TABLE IF EXISTS `c_api_group`;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `c_api_group` (
   `id` int(12) unsigned NOT NULL AUTO_INCREMENT,
-  `group_name` varchar(32) NOT NULL COMMENT '组名称/服务名称',
-  `group_context` varchar(250) DEFAULT NULL,
+  `group_name` varchar(32) NOT NULL COMMENT '路由服务组名称',
+  `group_context` varchar(250) DEFAULT NULL COMMENT '路由规则上下文PATH',
   `upstream_domain_name` varchar(64) DEFAULT NULL COMMENT '后端服务内网域名',
   `upstream_service_id` varchar(64) NOT NULL DEFAULT '0' COMMENT '后端服务（后端服务基于服务发现与注册机制才会用到，网关实现动态负载均衡策略）',
   `enable_balancing` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否启用动态负载均衡（即支持后端服务动态发现，1: 启用，0:禁用）',
   `need_auth` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否需要授权0不需要1需要',
-  `lb_algo` tinyint(4) DEFAULT NULL COMMENT '负载均衡算法： 1. 轮训 2.客户端ip_hash',
+  `lb_algo` tinyint(4) DEFAULT NULL COMMENT '负载均衡算法： 1. 轮训 2.客户端IP_HASH',
   `enable` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否启用，用于实现降级，1:启用，0:禁用',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后更新时间',
   `host_id` int(12) NOT NULL,
-  `gen_trace_id` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否生成全局id，1:启用，0:禁用',
-  `include_context` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'upstream是否包含context（1：包含，0：不包含）',
+  `gen_trace_id` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否生成全局id，1:是，0:否',
+  `enable_rewrite` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否重新上下文（1：重写，0：不重写）',
+  `rewrite_to` varchar(250) DEFAULT NULL COMMENT '重写后的上下文PATH',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_host_group_context` (`host_id`,`group_context`)
-) ENGINE=InnoDB AUTO_INCREMENT=832 DEFAULT CHARSET=utf8 COMMENT='API组配置表';
+) ENGINE=InnoDB AUTO_INCREMENT=832 DEFAULT CHARSET=utf8 COMMENT='API路由配置表';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -534,13 +535,14 @@ DROP TABLE IF EXISTS `u_admin_user`;
 CREATE TABLE `u_admin_user` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(60) NOT NULL DEFAULT '' COMMENT '用户名',
+  `nickname` varchar(60) NOT NULL DEFAULT '' COMMENT '姓名或者昵称',
   `password` varchar(200) NOT NULL DEFAULT '' COMMENT '密码',
   `is_admin` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否是管理员账户：0否，1是',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '创建或者更新时间',
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `mobile` varchar(15) DEFAULT NULL COMMENT '手机',
   `email` varchar(30) DEFAULT NULL COMMENT '邮箱',
-  `superior` varchar(30) DEFAULT NULL COMMENT '上级',
+  `superior` varchar(30) DEFAULT NULL COMMENT '上级姓名或者昵称',
   `enable` tinyint(1) DEFAULT '1' COMMENT '启禁用: 1:启用，0:禁用',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_username` (`username`)
