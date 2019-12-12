@@ -99,12 +99,14 @@ end
 function _M.insert_host(host_table, store)
     ngx.log(ngx.INFO,"insert_host...param【"..cjson.encode(host_table).."】")
     return store:insert({
-        sql = "insert into c_host(gateway_id,host,host_desc,enable) values(?,?,?,?)",
+        sql = "insert into c_host(gateway_id,host,host_desc,enable，limit_count, limit_period) values(?,?,?,?,?,?)",
         params={
             utils.trim(host_table.gateway_id),
             utils.trim(host_table.host),
             utils.trim(host_table.host_desc),
-            utils.trim(host_table.enable)
+            utils.trim(host_table.enable or 0),
+            utils.trim(host_table.limit_count or 10000),
+            utils.trim(host_table.limit_period or 1)
         }
     })
 end

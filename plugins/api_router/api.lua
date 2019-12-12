@@ -713,11 +713,11 @@ api:post("/host/add",function (store)
         -- 记录日志
         api:print_req_log('add host',req)
         -- 唯一性
-        local check_res = check_host_unique(req.body.host,req.body.id,store)
+        local check_res = check_host_unique(req.body.host,store)
 
         if check_res then
             -- 前端要求这种格式
-            return res:json({success = false,err_no=plugins_config.CODE_WARNING,msg="host已存在"})
+            return res:json({success = false,err_no=plugins_config.CODE_WARNING,msg="主机域名已存在"})
         end
 
         local flag,id = c_host_dao.insert_host(req.body, store)
