@@ -1,9 +1,3 @@
----
---- 路由管理RESTFUL API
---- Created by yusai.
---- DateTime: 2018/4/8 下午3:36
----
-
 local BaseAPI = require("plugins.base_api")
 local api_route_dao = require("core.dao.api_router_dao")
 local err_resp_template_utils = require("core.utils.err_resp_template_utils")
@@ -186,7 +180,7 @@ end
 -- return
 -- 存在：true
 -- 不存在：false
-local function check_gateway_unique(gateway_code,id,store)
+local function check_gateway_unique(gateway_code,store)
     local flag,contents = c_gateway_dao.query_gateway_by_code(gateway_code,store)
 
     if contents and #contents > 0 then
@@ -638,11 +632,11 @@ api:post("/gateway/add",function (store)
         -- 记录日志
         api:print_req_log('add gateway',req)
         -- 唯一性
-        local check_res = check_gateway_unique(req.body.gateway_code,req.body.id,store)
+        local check_res = check_gateway_unique(req.body.gateway_code,store)
 
         if check_res then
             -- 前端要求这种格式
-            return res:json({success = false,err_no=plugins_config.CODE_WARNING,msg="gateway_code已存在"})
+            return res:json({success = false,err_no=plugins_config.CODE_WARNING,msg="网关编码已存在"})
         end
 
         local flag,id = c_gateway_dao.insert_gateway(req.body, store)

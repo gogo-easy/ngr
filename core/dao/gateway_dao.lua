@@ -27,7 +27,7 @@ end
 
 function _M.query_gateway_by_code(gateway_code, store)
     local _, results, err = store:query({
-        sql = "select * from c_gateway where gateway_code = ?",
+        sql = "select id, gateway_code, gateway_desc,limit_count, limit_period from c_gateway where gateway_code = ?",
         params = {gateway_code}
     })
 
@@ -76,10 +76,12 @@ end
 function _M.insert_gateway(gateway, store)
     ngx.log(ngx.INFO,"insert_gateway...param【"..cjson.encode(gateway).."】")
     return store:insert({
-        sql = "insert into c_gateway(gateway_code,gateway_desc) values(?,?)",
+        sql = "insert into c_gateway(gateway_code,gateway_desc, limit_count, limit_period) values(?,?,?,?)",
         params={
             utils.trim(gateway.gateway_code),
-            utils.trim(gateway.gateway_desc)
+            utils.trim(gateway.gateway_desc),
+            utils.trim(gateway.limit_count),
+            utils.trim(gateway.limit_period)
         }
     })
 end
