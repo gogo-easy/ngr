@@ -639,12 +639,23 @@ api:post("/gateway/add",function (store)
             return res:json({success = false,err_no=plugins_config.CODE_WARNING,msg="网关编码已存在"})
         end
 
-        local flag,id = c_gateway_dao.insert_gateway(req.body, store)
+        local body = req.body
+        if not body.limit_count then
+            return res:json({success = false,err_no=plugins_config.CODE_WARNING,msg="QPS限流阀值不能为空!"})
+        end
 
+        local flag,id = c_gateway_dao.insert_gateway(body, store)
         if not flag then
             res:json({success = false,msg=err_msg})
         else
-            return res:json({success = true, data = {id = id}})
+            local err
+            flag,_,err = err_resp_template_utils.create(store,"gateway",id,body)
+            if flag then
+                local data ={id = id}
+                return res:json({success = true,data = data})
+            else
+                return res:json({success = false,msg=err or err_msg})
+            end
         end
     end
 end)

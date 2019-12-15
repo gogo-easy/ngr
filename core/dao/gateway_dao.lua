@@ -81,7 +81,7 @@ function _M.insert_gateway(gateway, store)
             utils.trim(gateway.gateway_code),
             utils.trim(gateway.gateway_desc),
             utils.trim(gateway.limit_count),
-            utils.trim(gateway.limit_period)
+            utils.trim(gateway.limit_period or 1)
         }
     })
 end
@@ -101,8 +101,9 @@ function _M.update_gateway_limit(gateway_table,store)
             "gateway_dao",gateway_table)
 
     local res = store:update({
-        sql = "UPDATE c_gateway set limit_count =? where id = ?",
+        sql = "UPDATE c_gateway set gateway_desc = ?, limit_count =? where id = ?",
         params={
+            gateway_table.gateway_desc,
             gateway_table.limit_count,
             gateway_table.id
         }
