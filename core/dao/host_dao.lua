@@ -99,13 +99,13 @@ end
 function _M.insert_host(host_table, store)
     ngx.log(ngx.INFO,"insert_host...param【"..cjson.encode(host_table).."】")
     return store:insert({
-        sql = "insert into c_host(gateway_id,host,host_desc,enable，limit_count, limit_period) values(?,?,?,?,?,?)",
+        sql = "insert into c_host(gateway_id, host, host_desc,enable, limit_count, limit_period) values(?,?,?,?,?,?)",
         params={
             utils.trim(host_table.gateway_id),
             utils.trim(host_table.host),
             utils.trim(host_table.host_desc),
             utils.trim(host_table.enable or 0),
-            utils.trim(host_table.limit_count or 10000),
+            utils.trim(host_table.limit_count ),
             utils.trim(host_table.limit_period or 1)
         }
     })
@@ -140,8 +140,9 @@ function _M.update_host_limit_count(host_table, store)
             "host_dao",host_table)
 
     local res = store:update({
-        sql = "UPDATE c_host set limit_count=? where id = ?",
+        sql = "UPDATE c_host set host_desc=?, limit_count=? where id = ?",
         params={
+            host_table.host_desc or "",
             host_table.limit_count,
             host_table.id
         }

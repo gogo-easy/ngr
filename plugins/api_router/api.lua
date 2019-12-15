@@ -197,7 +197,7 @@ local function check_gateway_unique(gateway_code,store)
     return false
 end
 
-local function check_host_unique(host,id,store)
+local function check_host_unique(host,store, id )
     local flag,contents = c_host_dao.query_host_by_host_name(host,store)
 
     if contents and #contents > 0 then
@@ -731,12 +731,24 @@ api:post("/host/add",function (store)
             return res:json({success = false,err_no=plugins_config.CODE_WARNING,msg="主机域名已存在"})
         end
 
-        local flag,id = c_host_dao.insert_host(req.body, store)
+        local body = req.body
+        if not body.limit_count then
+            return res:json({success = false,err_no=plugins_config.CODE_WARNING,msg="QPS限流阀值不能为空!"})
+        end
+
+        local flag,id = c_host_dao.insert_host(body, store)
 
         if not flag then
             res:json({success = false,msg=err_msg})
         else
-            return res:json({success = true, data = {id = id}})
+            local err
+            flag,_,err = err_resp_template_utils.create(store,"host",id,body)
+            if flag then
+                local data ={id = id}
+                return res:json({success = true,data = data})
+            else
+                return res:json({success = false,msg=err or err_msg})
+            end
         end
     end
 end)
@@ -771,7 +783,7 @@ api:post("/host/update",function (store)
         api:print_req_log('update host',req)
 
         local body = req.body
-        if check_host_unique(body.host, body.id, store) then
+        if check_host_unique(body.host, store,  body.id) then
             return res:json({success = false,err_no=plugins_config.CODE_WARNING,msg="host信息已存在"})
         end
 

@@ -514,7 +514,7 @@ server {
         listen       7777;
         #server_name  localhost;
         access_log /var/log/ngrAdmin/access.log main;
-        error_log /var/log/ngrAdmin/error.log error;
+        error_log /var/log/ngrAdmin/error.log info;
 
         set $request_headers '-';
         set $trace_id '-';
