@@ -1,9 +1,3 @@
----
---- 路由管理RESTFUL API
---- Created by yusai.
---- DateTime: 2018/4/8 下午3:36
----
-
 local BaseAPI = require("plugins.base_api")
 local api_route_dao = require("core.dao.api_router_dao")
 local err_resp_template_utils = require("core.utils.err_resp_template_utils")
@@ -186,7 +180,7 @@ end
 -- return
 -- 存在：true
 -- 不存在：false
-local function check_gateway_unique(gateway_code,id,store)
+local function check_gateway_unique(gateway_code,store)
     local flag,contents = c_gateway_dao.query_gateway_by_code(gateway_code,store)
 
     if contents and #contents > 0 then
@@ -203,7 +197,7 @@ local function check_gateway_unique(gateway_code,id,store)
     return false
 end
 
-local function check_host_unique(host,id,store)
+local function check_host_unique(host,store, id )
     local flag,contents = c_host_dao.query_host_by_host_name(host,store)
 
     if contents and #contents > 0 then
@@ -638,19 +632,30 @@ api:post("/gateway/add",function (store)
         -- 记录日志
         api:print_req_log('add gateway',req)
         -- 唯一性
-        local check_res = check_gateway_unique(req.body.gateway_code,req.body.id,store)
+        local check_res = check_gateway_unique(req.body.gateway_code,store)
 
         if check_res then
             -- 前端要求这种格式
-            return res:json({success = false,err_no=plugins_config.CODE_WARNING,msg="gateway_code已存在"})
+            return res:json({success = false,err_no=plugins_config.CODE_WARNING,msg="网关编码已存在"})
         end
 
-        local flag,id = c_gateway_dao.insert_gateway(req.body, store)
+        local body = req.body
+        if not body.limit_count then
+            return res:json({success = false,err_no=plugins_config.CODE_WARNING,msg="QPS限流阀值不能为空!"})
+        end
 
+        local flag,id = c_gateway_dao.insert_gateway(body, store)
         if not flag then
             res:json({success = false,msg=err_msg})
         else
-            return res:json({success = true, data = {id = id}})
+            local err
+            flag,_,err = err_resp_template_utils.create(store,"gateway",id,body)
+            if flag then
+                local data ={id = id}
+                return res:json({success = true,data = data})
+            else
+                return res:json({success = false,msg=err or err_msg})
+            end
         end
     end
 end)
@@ -719,19 +724,31 @@ api:post("/host/add",function (store)
         -- 记录日志
         api:print_req_log('add host',req)
         -- 唯一性
-        local check_res = check_host_unique(req.body.host,req.body.id,store)
+        local check_res = check_host_unique(req.body.host,store)
 
         if check_res then
             -- 前端要求这种格式
-            return res:json({success = false,err_no=plugins_config.CODE_WARNING,msg="host已存在"})
+            return res:json({success = false,err_no=plugins_config.CODE_WARNING,msg="主机域名已存在"})
         end
 
-        local flag,id = c_host_dao.insert_host(req.body, store)
+        local body = req.body
+        if not body.limit_count then
+            return res:json({success = false,err_no=plugins_config.CODE_WARNING,msg="QPS限流阀值不能为空!"})
+        end
+
+        local flag,id = c_host_dao.insert_host(body, store)
 
         if not flag then
             res:json({success = false,msg=err_msg})
         else
-            return res:json({success = true, data = {id = id}})
+            local err
+            flag,_,err = err_resp_template_utils.create(store,"host",id,body)
+            if flag then
+                local data ={id = id}
+                return res:json({success = true,data = data})
+            else
+                return res:json({success = false,msg=err or err_msg})
+            end
         end
     end
 end)
@@ -766,7 +783,7 @@ api:post("/host/update",function (store)
         api:print_req_log('update host',req)
 
         local body = req.body
-        if check_host_unique(body.host, body.id, store) then
+        if check_host_unique(body.host, store,  body.id) then
             return res:json({success = false,err_no=plugins_config.CODE_WARNING,msg="host信息已存在"})
         end
 
