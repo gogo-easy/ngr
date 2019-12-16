@@ -19,15 +19,18 @@ ARG RESTY_CONFIG_OPTIONS="\
     --with-http_v2_module \
     "
 ARG RESTY_CONFIG_OPTIONS_MORE=""
-
 # These are not intended to be user-specified
 ARG _RESTY_CONFIG_DEPS="--with-openssl=/tmp/openssl-${RESTY_OPENSSL_VERSION} --with-pcre=/tmp/pcre-${RESTY_PCRE_VERSION}"
 
+ARG LUAFILESYSTEM_VERSION="1_7_0_2"
+ARG NGR_VERSION="1.0.3"
 
 # 1) Install apt dependencies
 # 2) Download and untar OpenSSL, PCRE, and OpenResty
 # 3) Build OpenResty
-# 4) Cleanup
+# 4) Build luafilesystem
+# 5) Build ngr
+# 6) Cleanup
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -57,14 +60,20 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
     && ./configure -j${RESTY_J} ${_RESTY_CONFIG_DEPS} ${RESTY_CONFIG_OPTIONS} ${RESTY_CONFIG_OPTIONS_MORE} \
     && make -j${RESTY_J} \
     && make -j${RESTY_J} install
-RUN ln -s /usr/local/openresty/bin/resty /usr/local/bin/resty
-RUN ln -s /usr/local/openresty/bin/openresty /usr/local/bin/openresty
-RUN ln -s /usr/local/openresty/nginx/sbin/nginx /usr/local/bin/nginx
-RUN apt-get update && apt-get install -y make gcc
-ADD luafilesystem-1.7.0.2.tar.gz /tmp
-WORKDIR /tmp/luafilesystem-1_7_0_2/
-RUN make && make install
-ADD ngr-1.0.2.tar.gz /tmp
-WORKDIR /tmp/ngr-1.0.2/
-RUN make install
-CMD ["ngr", "start", "-d=off"]
+RUN ln -s /usr/local/openresty/bin/resty /usr/local/bin/resty \
+    && ln -s /usr/local/openresty/bin/openresty /usr/local/bin/openresty \
+    && ln -s /usr/local/openresty/nginx/sbin/nginx /usr/local/bin/nginx
+WORKDIR /tmp
+RUN curl -fSL https://github.com/keplerproject/luafilesystem/archive/v${LUAFILESYSTEM_VERSION}.tar.gz -o v${LUAFILESYSTEM_VERSION}.tar.gz \
+    && tar xzf v${LUAFILESYSTEM_VERSION}.tar.gz \
+    && cd luafilesystem-${LUAFILESYSTEM_VERSION} \
+    && sed -i 's?PREFIX=\/usr\/local?PREFIX=\/usr\/local\/openresty\/luajit?g' config \
+    && sed -i 's?LUA_INC= $(PREFIX)\/include?LUA_INC= $(PREFIX)\/include\/luajit-2.1?' config \
+    && make && make install \
+    && cd /tmp
+RUN curl -fSL https://github.com/gogo-easy/ngr/archive/v${NGR_VERSION}.tar.gz -o v${NGR_VERSION}.tar.gz \
+    && tar zxf v${NGR_VERSION}.tar.gz \
+    && cd ngr-${NGR_VERSION} \
+    && make install \
+    && cd /tmp
+ENTRYPOINT ["ngr", "start", "-d=off"]
