@@ -759,9 +759,10 @@ api:post("/host/set_limit_count",function (store)
         api:print_req_log('set_limit_count host',req)
 
         local body = req.body
-        if not body.limit_count then
-            return res:json({success = false,err_no=plugins_config.CODE_WARNING,msg="QPS不能为空"})
+        if not body.limit_count or body.limit_count == "0" then
+            return res:json({success = false,err_no=plugins_config.CODE_WARNING,msg="QPS限流阀值不能为空!"})
         end
+
         local flag = c_host_dao.update_host_limit_count(body,store)
         if not flag then
             return res:json({success = false,msg=err_msg})
