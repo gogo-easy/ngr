@@ -63,6 +63,12 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
 RUN ln -s /usr/local/openresty/bin/resty /usr/local/bin/resty \
     && ln -s /usr/local/openresty/bin/openresty /usr/local/bin/openresty \
     && ln -s /usr/local/openresty/nginx/sbin/nginx /usr/local/bin/nginx
+    && cd /tmp \
+    && rm -rf \
+        openssl-${RESTY_OPENSSL_VERSION} \
+        openssl-${RESTY_OPENSSL_VERSION}.tar.gz \
+        openresty-${RESTY_VERSION}.tar.gz openresty-${RESTY_VERSION} \
+        pcre-${RESTY_PCRE_VERSION}.tar.gz pcre-${RESTY_PCRE_VERSION}
 WORKDIR /tmp
 RUN curl -fSL https://github.com/keplerproject/luafilesystem/archive/v${LUAFILESYSTEM_VERSION}.tar.gz -o v${LUAFILESYSTEM_VERSION}.tar.gz \
     && tar xzf v${LUAFILESYSTEM_VERSION}.tar.gz \
@@ -71,9 +77,11 @@ RUN curl -fSL https://github.com/keplerproject/luafilesystem/archive/v${LUAFILES
     && sed -i 's?LUA_INC= $(PREFIX)\/include?LUA_INC= $(PREFIX)\/include\/luajit-2.1?' config \
     && make && make install \
     && cd /tmp
+    && rm -rf v${LUAFILESYSTEM_VERSION}.tar.gz luafilesystem-${LUAFILESYSTEM_VERSION}
 RUN curl -fSL https://github.com/gogo-easy/ngr/archive/v${NGR_VERSION}.tar.gz -o v${NGR_VERSION}.tar.gz \
     && tar zxf v${NGR_VERSION}.tar.gz \
     && cd ngr-${NGR_VERSION} \
     && make install \
     && cd /tmp
+    && v${NGR_VERSION}.tar.gz
 ENTRYPOINT ["ngr", "start", "-d=off"]
