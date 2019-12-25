@@ -1,9 +1,3 @@
----
---- api 路由dao
---- Created by yusai.
---- DateTime: 2018/4/8 下午2:14
----
-
 local ngr_cache = require("core.cache.local.global_cache_util")
 local ngr_cache_prefix = require("core.cache.local.global_cache_prefix")
 local dynamicd_build = require("core.dao.dynamicd_build_sql")

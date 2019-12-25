@@ -1,6 +1,6 @@
 ---
---- Copyright (c) 2016-2018 www.mwee.cn & Jacobs Lei 
---- Author: chenghao
+--- Copyright (c)GoGo Easy Team & Jacobs Lei
+--- Author: Go Go Easy Team
 --- Date: 2018/09/01
 --- Time: 下午6:36
 local cjson = require("cjson")

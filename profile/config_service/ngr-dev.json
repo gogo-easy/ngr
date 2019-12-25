@@ -17,7 +17,7 @@
       "host": "10.0.21.221",
       "port": 3306,
       "database": "ngr",
-      "user": "mw_capi_dev",
+      "user": "ngr_capi_dev",
       "password": "bboiNwrsm9jwc",
       "max_packet_size": 1048576
     },

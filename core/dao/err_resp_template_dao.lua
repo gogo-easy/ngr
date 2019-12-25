@@ -1,7 +1,3 @@
----
---- Created by yusai.
---- DateTime: 2018/6/11 上午10:45
----
 local cjson = require("core.utils.json")
 local _M = {}
 

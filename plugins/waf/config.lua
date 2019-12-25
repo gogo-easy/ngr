@@ -1,6 +1,6 @@
 ---
 --- 功能：waf 常量配置
---- Created by: yusai.
+--- Created by: Go Go Easy Team.
 --- DateTime: 2018/5/2
 ---
 

@@ -1,6 +1,6 @@
 ---
 --- 功能：redis lua 脚本
---- Created by: yusai.
+--- Created by: Go Go Easy Team.
 --- DateTime: 2018/4/23
 ---
 

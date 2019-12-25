@@ -1,6 +1,6 @@
 ---
 --- 功能：初始化conf
---- Created by: yusai.
+--- Created by: Go Go Easy Team.
 --- DateTime: 2018/4/18
 ---
 local conf_loader = require "bin.initconf.conf_loader"

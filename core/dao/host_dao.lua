@@ -1,8 +1,3 @@
----
---- Copyright (c) 2016-2018 www.mwee.cn & Jacobs Lei 
---- Author: chenghao
---- Date: 2018/07/27
---- Time: 下午6:36
 local cjson = require("cjson")
 local dynamicd_build = require("core.dao.dynamicd_build_sql")
 local utils = require("core.utils.utils")

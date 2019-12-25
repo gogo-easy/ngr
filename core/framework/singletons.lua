@@ -2,7 +2,7 @@
 ---
 ---Ngr singleton object holder
 ---
---- Copyright (c) 2016-2018 www.mwee.cn & Jacobs Lei 
+--- Copyright (c)GoGo Easy Team & Jacobs Lei
 --- Author: Jacobs Lei
 --- Date: 2018/7/3
 --- Time: 下午3:33

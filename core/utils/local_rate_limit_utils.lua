@@ -1,6 +1,6 @@
 ---
 --- 本地限流
---- Created by yusai.
+--- Created by Go Go Easy Team.
 --- DateTime: 2019/1/7 4:57 PM
 ---
 
