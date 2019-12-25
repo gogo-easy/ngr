@@ -63,6 +63,10 @@ NgRouter is an enterprise-class API gateway based on Openresty. Compared to Open
 - **日志**
 
   支持多种日志功能，如本地日志、syslog、ELK
+  
+## How to use
+
+-  [使用管理控制台](https://github.com/gogo-easy/ngrAdminPortal/wiki/Using-Guide)
 
 ## Deployment
 
