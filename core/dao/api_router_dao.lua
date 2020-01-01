@@ -1,9 +1,3 @@
----
---- api 路由dao
---- Created by yusai.
---- DateTime: 2018/4/8 下午2:14
----
-
 local ngr_cache = require("core.cache.local.global_cache_util")
 local ngr_cache_prefix = require("core.cache.local.global_cache_prefix")
 local dynamicd_build = require("core.dao.dynamicd_build_sql")
@@ -215,8 +209,9 @@ function _M.insert_api_group(api_group,store)
                  lb_algo,
                  gen_trace_id,
                  host_id,
-                 include_context)
-                values (?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?);
+                 enable_rewrite,
+                 rewrite_to)
+                values (?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?, ?);
         ]]
     return store:insert({
         sql = sql,
@@ -228,7 +223,8 @@ function _M.insert_api_group(api_group,store)
                 api_group.enable_balancing or 0,api_group.need_auth or 0,api_group.enable or 0,api_group.lb_algo or 0,
                 api_group.gen_trace_id or 0,
                 api_group.host_id,
-                api_group.include_context or 0
+                api_group.enable_rewrite or 0,
+                api_group.rewrite_to or "",
         }
     })
 end
@@ -247,7 +243,7 @@ function _M.update_api_group(api_group,store)
     local sql = [[
         UPDATE c_api_group
             set group_name = ?, group_context = ?, upstream_domain_name = ?, upstream_service_id = ?, enable_balancing = ?,
-              need_auth    = ?, enable = ?, lb_algo = ?, host_id = ?, gen_trace_id = ?,include_context = ?, updated_at = sysdate()
+              need_auth    = ?, enable = ?, lb_algo = ?, host_id = ?, gen_trace_id = ?,enable_write = ?,rewrite_to = ?, updated_at = sysdate()
             where id = ?
     ]]
     local res = store:update({
@@ -263,7 +259,8 @@ function _M.update_api_group(api_group,store)
             api_group.lb_algo or 0,
             api_group.host_id,
             api_group.gen_trace_id,
-            api_group.include_context or 0,
+            api_group.enable_rewrite or 0,
+            api_group.rewrite_to or "",
             api_group.id
         }
     })
@@ -310,7 +307,11 @@ function _M.query_group_info_by_hosts(hosts,store)
 
     local query_string = string.rep("?,",#hosts)
     local param_string = string.sub(query_string,1,string.len(query_string)-1)
-    local sql_string = "select b.id,b.gen_trace_id,b.group_name,b.group_context,b.upstream_domain_name,b.upstream_service_id,b.enable_balancing,b.need_auth,b.lb_algo,b.enable,b.host_id,b.include_context,a.host from c_host a,c_api_group b where a.id=b.host_id and b.enable=1 and a.enable=1 and a.host in(".. param_string .. ")"
+    local sql_string = "select b.id,b.gen_trace_id,b.group_name,b.group_context,"..
+            "b.upstream_domain_name,b.upstream_service_id,b.enable_balancing,b.need_auth,"..
+            "b.lb_algo,b.enable,b.host_id,b.enable_rewrite,b.rewrite_to,"..
+            "a.host from c_host a,c_api_group b  " ..
+            "where a.id=b.host_id and b.enable=1 and a.enable=1 and a.host in(" .. param_string .. ")"
     local flag,api_groups,err = store:query({
         sql = sql_string,
         params=hosts

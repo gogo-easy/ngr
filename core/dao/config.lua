@@ -1,8 +1,3 @@
---- dao 公用配置
---- Created by yusai.
---- DateTime: 2018/6/7 下午1:54
----
-
 local _M = {}
 
 _M.query_list_order = " order by updated_at desc"

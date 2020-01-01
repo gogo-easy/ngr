@@ -1,6 +1,6 @@
 ---
 --- log config
---- Created by yusai.
+--- Created by Go Go Easy Team.
 --- DateTime: 2018/11/13 下午3:05
 ---
 

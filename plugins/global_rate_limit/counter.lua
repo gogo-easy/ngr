@@ -1,6 +1,6 @@
 ---
 --- request times counter implemeatation
---- Copyright (c) 2016 - 2018 www.mwee.cn & Jacobs Lei 
+--- Copyright (c) GoGo Easy Team & Jacobs Lei
 --- Author: Jacobs Lei
 --- Date: 2018/4/9
 --- Time: 下午5:51

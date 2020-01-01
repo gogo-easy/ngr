@@ -1,6 +1,6 @@
 ---
 --- waf handler
---- Created by yusai.
+--- Created by Go Go Easy Team.
 --- DateTime: 2018/4/11 上午10:42
 ---
 

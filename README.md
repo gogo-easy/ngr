@@ -63,10 +63,14 @@ NgRouter is an enterprise-class API gateway based on Openresty. Compared to Open
 - **日志**
 
   支持多种日志功能，如本地日志、syslog、ELK
+  
+## How to use
+
+- [使用管理控制台](https://github.com/gogo-easy/ngrAdminPortal/wiki/Using-Guide)
 
 ## Deployment
 
-- [Quick Start](https://github.com/gogo-easy/ngr/wiki/How-to-install-NgRouter(%E5%AE%89%E8%A3%85%E8%AF%B4%E6%98%8E))
+- [Quick Start](https://github.com/gogo-easy/ngr/wiki/How-to-install-NgRouter(%E5%AE%89%E8%A3%85%E8%AF%B4%E6%98%8E)
 
 ## Release
 
@@ -83,6 +87,11 @@ NgRouter is an enterprise-class API gateway based on Openresty. Compared to Open
 ## License
 
 The project is licensed by [Apache 2.0](https://github.com/gogo-easy/ngr/blob/master/LICENSE)
+
+## 管理控制台项目
+
+[ngrAdminPortal ](https://github.com/gogo-easy/ngrAdminPortal)
+
 
 [ngr-logo]: ./logo/hoot1.png
 [ngr-url]: https://github.com/gogo-easy/ngr

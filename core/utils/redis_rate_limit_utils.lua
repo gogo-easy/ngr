@@ -1,11 +1,11 @@
 ---
 --- redis + lua request rate limiting utils
---- Copyright (c) 2016 - 2018 www.mwee.cn & Jacobs Lei 
+--- Copyright (c) GoGo Easy Team & Jacobs Lei
 --- Author: Jacobs Lei
 --- Date: 2018/4/10
 --- Time: 下午12:36
 
--- default exprired time for different rate limit periods
+-- default expire time for different rate limit periods
 local EXPIRE_TIME = {
     Second = 60, -- 59s+
     Minute = 180, -- 120s+

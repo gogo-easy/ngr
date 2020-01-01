@@ -1,6 +1,5 @@
 ---
 ---API Groups's Request Rate Limit Configuration Dao
---- Copyright (c) 2016 - 2018 www.mwee.cn & Jacobs Lei
 -- Author: Jacobs Lei
 -- Date: 2018/4/3
 -- Time: 下午6:39

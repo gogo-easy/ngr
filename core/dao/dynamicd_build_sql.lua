@@ -1,9 +1,3 @@
----
---- 功能：动态构建 sql
---- Created by: yusai.
---- DateTime: 2018/4/28
----
-
 local utils = require("core.utils.utils")
 
 local _M ={}

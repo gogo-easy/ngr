@@ -1,0 +1,87 @@
+FROM ubuntu:trusty
+LABEL maintainer="spring4future@163.com"
+
+# Docker Build Arguments
+ARG RESTY_VERSION="1.11.2.3"
+ARG RESTY_LUAROCKS_VERSION="2.4.3"
+ARG RESTY_OPENSSL_VERSION="1.0.2k"
+ARG RESTY_PCRE_VERSION="8.41"
+ARG RESTY_J="1"
+ARG RESTY_CONFIG_OPTIONS="\
+    --with-luajit \
+    --without-http_redis2_module \
+    --with-http_iconv_module \
+    --with-pcre-jit \
+    --with-ipv6 \
+    --with-http_realip_module \
+    --with-http_ssl_module \
+    --with-http_stub_status_module \
+    --with-http_v2_module \
+    "
+ARG RESTY_CONFIG_OPTIONS_MORE=""
+# These are not intended to be user-specified
+ARG _RESTY_CONFIG_DEPS="--with-openssl=/tmp/openssl-${RESTY_OPENSSL_VERSION} --with-pcre=/tmp/pcre-${RESTY_PCRE_VERSION}"
+
+ARG LUAFILESYSTEM_VERSION="1_7_0_2"
+ARG NGR_VERSION="1.0.3"
+
+# 1) Install apt dependencies
+# 2) Download and untar OpenSSL, PCRE, and OpenResty
+# 3) Build OpenResty
+# 4) Build luafilesystem
+# 5) Build ngr
+# 6) Cleanup
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        build-essential \
+        ca-certificates \
+        curl \
+        gettext-base \
+        libgd-dev \
+        libgeoip-dev \
+        libncurses5-dev \
+        libperl-dev \
+        libreadline-dev \
+        libxslt1-dev \
+        gcc \
+        make \
+        perl \
+        unzip \
+        zlib1g-dev \
+    && cd /tmp \
+    && curl -fSL https://www.openssl.org/source/openssl-${RESTY_OPENSSL_VERSION}.tar.gz -o openssl-${RESTY_OPENSSL_VERSION}.tar.gz \
+    && tar xzf openssl-${RESTY_OPENSSL_VERSION}.tar.gz \
+    && curl -fSL https://ftp.pcre.org/pub/pcre/pcre-${RESTY_PCRE_VERSION}.tar.gz -o pcre-${RESTY_PCRE_VERSION}.tar.gz \
+    && tar xzf pcre-${RESTY_PCRE_VERSION}.tar.gz \
+    && curl -fSL https://openresty.org/download/openresty-${RESTY_VERSION}.tar.gz -o openresty-${RESTY_VERSION}.tar.gz \
+    && tar xzf openresty-${RESTY_VERSION}.tar.gz \
+    && cd /tmp/openresty-${RESTY_VERSION} \
+    && ./configure -j${RESTY_J} ${_RESTY_CONFIG_DEPS} ${RESTY_CONFIG_OPTIONS} ${RESTY_CONFIG_OPTIONS_MORE} \
+    && make -j${RESTY_J} \
+    && make -j${RESTY_J} install
+RUN ln -s /usr/local/openresty/bin/resty /usr/local/bin/resty \
+    && ln -s /usr/local/openresty/bin/openresty /usr/local/bin/openresty \
+    && ln -s /usr/local/openresty/nginx/sbin/nginx /usr/local/bin/nginx
+    && cd /tmp \
+    && rm -rf \
+        openssl-${RESTY_OPENSSL_VERSION} \
+        openssl-${RESTY_OPENSSL_VERSION}.tar.gz \
+        openresty-${RESTY_VERSION}.tar.gz openresty-${RESTY_VERSION} \
+        pcre-${RESTY_PCRE_VERSION}.tar.gz pcre-${RESTY_PCRE_VERSION}
+WORKDIR /tmp
+RUN curl -fSL https://github.com/keplerproject/luafilesystem/archive/v${LUAFILESYSTEM_VERSION}.tar.gz -o v${LUAFILESYSTEM_VERSION}.tar.gz \
+    && tar xzf v${LUAFILESYSTEM_VERSION}.tar.gz \
+    && cd luafilesystem-${LUAFILESYSTEM_VERSION} \
+    && sed -i 's?PREFIX=\/usr\/local?PREFIX=\/usr\/local\/openresty\/luajit?g' config \
+    && sed -i 's?LUA_INC= $(PREFIX)\/include?LUA_INC= $(PREFIX)\/include\/luajit-2.1?' config \
+    && make && make install \
+    && cd /tmp
+    && rm -rf v${LUAFILESYSTEM_VERSION}.tar.gz luafilesystem-${LUAFILESYSTEM_VERSION}
+RUN curl -fSL https://github.com/gogo-easy/ngr/archive/v${NGR_VERSION}.tar.gz -o v${NGR_VERSION}.tar.gz \
+    && tar zxf v${NGR_VERSION}.tar.gz \
+    && cd ngr-${NGR_VERSION} \
+    && make install-admin \
+    && cd /tmp
+    && v${NGR_VERSION}.tar.gz
+ENTRYPOINT ["ngr", "start", "-d=off"]
