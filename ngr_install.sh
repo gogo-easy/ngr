@@ -26,9 +26,9 @@ yum -y install unzip
 yum -y install openresty
 yum -y install openresty-resty
 
-ln -s /usr/local/openresty/bin/resty /usr/local/bin/resty
-ln -s /usr/local/openresty/bin/openresty /usr/local/bin/openresty
-ln -s /usr/local/openresty/nginx/sbin/nginx /usr/local/bin/nginx
+ln -sf /usr/local/openresty/bin/resty /usr/local/bin/resty
+ln -sf /usr/local/openresty/bin/openresty /usr/local/bin/openresty
+ln -sf /usr/local/openresty/nginx/sbin/nginx /usr/local/bin/nginx
 
 # Verify Openresty Installation
 nginx -v
@@ -51,7 +51,7 @@ cd luarocks-3.2.1/
 --with-lua-lib="/usr/local/openresty/luajit/lib/"
 make build
 make install
-ln -s /usr/local/openresty/luajit/bin/luarocks /usr/local/bin/luarocks
+ln -sf /usr/local/openresty/luajit/bin/luarocks /usr/local/bin/luarocks
 cd ..
 
 # Install luafilesystem by luarocks
