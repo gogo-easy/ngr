@@ -1,6 +1,6 @@
 ---
 --- 配置
---- Created by yusai.
+--- Created by Go Go Easy Team.
 --- DateTime: 2018/5/16 下午6:04
 ---
 local _M = {}

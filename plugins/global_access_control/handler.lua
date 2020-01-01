@@ -1,6 +1,6 @@
 ---
 --- 全局控制(校验)
---- Created by yusai.
+--- Created by Go Go Easy Team.
 --- DateTime: 2018/5/16 下午5:58
 ---
 

@@ -17,7 +17,7 @@
       "host": "10.0.21.221",
       "port": 3306,
       "database": "ngr",
-      "user": "mw_capi_dev",
+      "user": "ngr_capi_dev",
       "password": "bboiNwrsm9jwc",
       "max_packet_size": 1048576
     },
@@ -45,7 +45,7 @@
     "event_mode": "epoll",
     "worker_rlimit":"65535",
     "worker_connections":"65535",
-    "dns_resolver":["10.0.146.215"],
+    "dns_resolver":["8.8.8.8"],
     "dns_resolver_valid":"300s",
     "resolver_timeout":"60s",
     "lua_code_cache":"on",
@@ -53,9 +53,6 @@
     "lua_max_pending_timers":"16384",
     "lua_max_running_timers":"4096",
     "real_ip_header":"X-Forwarded-For",
-    "real_ip_recursive":"on",
-    "trusted_ips":["112.124.159.0/24","116.211.163.0/24"],
-    "cmdb_url":"http://test.cmdb.mwbyd.cn",
-    "cmdb_env":"test"
+    "real_ip_recursive":"on"
   }
 }

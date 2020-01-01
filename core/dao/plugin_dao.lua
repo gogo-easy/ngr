@@ -1,6 +1,6 @@
 ---
 --- plugin configuration information dao
---- Copyright (c) 2016 - 2018 www.mwee.cn & Jacobs Lei 
+--- Copyright (c) GoGo Easy Team & Jacobs Lei
 --- Author: Jacobs Lei
 --- Date: 2018/4/6
 --- Time: 下午4:05

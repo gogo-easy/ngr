@@ -1,5 +1,5 @@
 --- 分布式缓存处理
---- Created by yusai.
+--- Created by Go Go Easy Team.
 --- DateTime: 2018/4/9 下午2:03
 ---
 local redis_db = require("core.utils.redis_client")

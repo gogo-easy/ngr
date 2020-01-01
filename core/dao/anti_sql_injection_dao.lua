@@ -1,8 +1,3 @@
----
---- Created by yusai.
---- DateTime: 2018/9/10 下午1:51
----
-
 local _M = {}
 
 local utils = require("core.utils.utils")

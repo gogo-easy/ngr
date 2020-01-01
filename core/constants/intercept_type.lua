@@ -1,6 +1,6 @@
 ---
 --- 选择器类型
---- Created by yusai.
+--- Created by Go Go Easy Team.
 --- DateTime: 2018/4/27 下午7:40
 ---
 

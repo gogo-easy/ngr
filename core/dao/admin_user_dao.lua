@@ -1,8 +1,3 @@
----
---- 功能：admin dao 相关功能
---- Created by: yusai.
---- DateTime: 2018/5/3
----
 local json = require("core.utils.json")
 local utils = require("core.utils.utils")
 local dynamicd_build = require("core.dao.dynamicd_build_sql")

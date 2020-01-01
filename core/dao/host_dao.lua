@@ -1,8 +1,3 @@
----
---- Copyright (c) 2016-2018 www.mwee.cn & Jacobs Lei 
---- Author: chenghao
---- Date: 2018/07/27
---- Time: 下午6:36
 local cjson = require("cjson")
 local dynamicd_build = require("core.dao.dynamicd_build_sql")
 local utils = require("core.utils.utils")
@@ -99,12 +94,14 @@ end
 function _M.insert_host(host_table, store)
     ngx.log(ngx.INFO,"insert_host...param【"..cjson.encode(host_table).."】")
     return store:insert({
-        sql = "insert into c_host(gateway_id,host,host_desc,enable) values(?,?,?,?)",
+        sql = "insert into c_host(gateway_id, host, host_desc,enable, limit_count, limit_period) values(?,?,?,?,?,?)",
         params={
             utils.trim(host_table.gateway_id),
             utils.trim(host_table.host),
             utils.trim(host_table.host_desc),
-            utils.trim(host_table.enable)
+            utils.trim(host_table.enable or 0),
+            utils.trim(host_table.limit_count ),
+            utils.trim(host_table.limit_period or 1)
         }
     })
 end
@@ -138,8 +135,9 @@ function _M.update_host_limit_count(host_table, store)
             "host_dao",host_table)
 
     local res = store:update({
-        sql = "UPDATE c_host set limit_count=? where id = ?",
+        sql = "UPDATE c_host set host_desc=?, limit_count=? where id = ?",
         params={
+            host_table.host_desc or "",
             host_table.limit_count,
             host_table.id
         }

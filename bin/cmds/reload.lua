@@ -30,11 +30,12 @@ function _M.execute(origin_args)
     -- format and parse args
     local args = {
         ngr_conf = origin_args.conf,
-        prefix = origin_args.prefix
+        prefix = origin_args.prefix,
+        daemon = origin_args.daemon
     }
     for i, v in pairs(origin_args) do
-        if i ~= "c" and i ~= "p" and i ~= "conf" and i ~= "prefix" then
-            logger:error("Command reload option[name=%s] do not support.", i)
+        if i ~= "c" and i ~= "p" and i ~= "conf" and i ~= "prefix" and i ~= "d" and i ~= "daemon" then
+            logger:error("Command reload option[%s=%s] do not support.", i,v)
             return
         end
         if i == "c" and not args.ngr_conf then
@@ -43,6 +44,9 @@ function _M.execute(origin_args)
         end
         if i == "p" and not args.prefix then
             args.prefix = v
+        end
+        if i == "d" and not args.daemon then
+            args.daemon = v
         end
     end
 
@@ -53,6 +57,10 @@ function _M.execute(origin_args)
     end
     if not args.ngr_conf then
         args.ngr_conf = args.prefix .. "/conf/ngr.json"
+    end
+
+    if not args.daemon then
+        args.daemon = "on"
     end
 
     args.ngx_conf = args.prefix .. "/conf/nginx.conf"

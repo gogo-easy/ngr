@@ -5,8 +5,8 @@
 ---
 
 local server = {}
-server.version = "1.0"
-server.name="NgrRouter-Admin"
+server.version = "1.0.3"
+server.name="NgrRouterAdmin"
 server.full_name = server.name .. "/" .. server.version
 
 -- 跨域相关配置

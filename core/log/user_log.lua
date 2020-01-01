@@ -1,6 +1,6 @@
 ---
 --- 用户log 记录
---- Created by yusai.
+--- Created by Go Go Easy Team.
 --- DateTime: 2019/2/13 4:58 PM
 ---
 local _M ={}

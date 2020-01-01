@@ -1,7 +1,7 @@
 return [[
 worker_processes ${{worker_processes_count}};
 worker_rlimit_nofile ${{worker_rlimit}};
-daemon on;
+daemon ${{daemon}};
 pid pids/nginx.pid;
 events {
     use ${{event_mode}};
@@ -514,7 +514,7 @@ server {
         listen       7777;
         #server_name  localhost;
         access_log /var/log/ngrAdmin/access.log main;
-        error_log /var/log/ngrAdmin/error.log error;
+        error_log /var/log/ngrAdmin/error.log info;
 
         set $request_headers '-';
         set $trace_id '-';
