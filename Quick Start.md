@@ -28,14 +28,23 @@ NgRouter的安装包分为：*源码包*、*离线RPM包*两种。如果您的�
 
 ## 安装步骤
 
-### 初始化MySQL数据库
+### 解压安装包
 
-用任意的MySQL客户端将[install_db_script/init.sql](https://github.com/gogo-easy/ngr/blob/master/install_db_script/release-1.0.sql)即可。
+```
+tar -zvxf ngr-version.tar.gz 
+
+```
+
+其中version替换成对应版本。
+
+### 初始化ngr配置数据库
+
+用任意的MySQL客户端执行数据库初始化脚本，脚本路径install_db_script/initialize-dbscript-version.sql(其中version替换成对应版本即可)。
 
 下面以MySQL原生客户端为例：
 
 ```mysql
-source /localpath/sql/init.sql
+source /localpath/sql/initi.sql
 ```
 
 ### 安装NgRouter
@@ -47,7 +56,7 @@ source /localpath/sql/init.sql
 
 #### 通过源码包安装
 
-通过源码包安装要求安装环境可以连接公网，执行ngr_install.sh安装脚本即可：
+通过源码包安装要求安装环境可以连接公网，执行安装脚本即可，一键化安装脚本路径install_utils/install_script：
 
 ```shell
 sudo sh ngr_install.sh
@@ -61,9 +70,9 @@ sudo sh ngr_install.sh
 sudo rpm -ivh ngr-1.0.0-1.el7.centos.x86_64.rpm
 ```
 
-### 配置数据库连接信息
+### 配置ngr
 
-在/usr/local/ngr/conf/ngr.json中，找到**store_mysql**部分及**cache_redis**部分，并修改MySQL及Redis的正确配置信息。
+拷贝/usr/local/ngr/conf/ngr.json到/etc/ngr/ngr.json中，找到**store_mysql**部分及**cache_redis**部分，并修改MySQL及Redis的正确配置信息。
 
 ## 启动NgRouter
 
