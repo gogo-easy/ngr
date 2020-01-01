@@ -1,5 +1,5 @@
 FROM ubuntu:trusty
-LABEL maintainer="dcwl4ever@163.com"
+LABEL maintainer="spring4future@163.com"
 
 # Docker Build Arguments
 ARG RESTY_VERSION="1.11.2.3"
