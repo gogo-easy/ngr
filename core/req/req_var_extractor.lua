@@ -19,6 +19,7 @@ local str_len = string.len
 local str_upper = string.upper
 local str_gsub = string.gsub
 local require = require
+local tonumber = tonumber
 local cjson =require("core.utils.json")
 local DEBUG = ngx.DEBUG
 local ngx_log = ngx.log
@@ -203,19 +204,33 @@ function _extractor.extract_req_uri()
     return result
 end
 
--- 如果该组group_context参与路由，那么req_info里面的path需要加上group_context
--- req_info.path = req_info.api_group_context .."/" .. req_info.path
--- req_info.api_group_context=""
-function _extractor.deal_req_info_for_group_context(api_group_info, req_info)
+---
+--- generate upstream request path using current req_info & api group info
+--- @param api_group_info: must not be nil
+--- @param req_info: must not be nil
+---
+function _extractor.gen_upstream_req_info_for_group_context(api_group_info, req_info)
+    if ( not api_group_info.enable_rewrite ) then
+        api_group_info.enable_rewrite = "0"
+    end
 
-    if(api_group_info and api_group_info.enable_rewrite and tonumber(api_group_info.enable_rewrite) == 1) then
-        if(not stringy.endswith(req_info.rewrite_to,"/")
-                and req_info.path and req_info.path ~= "" ) then
-            req_info.api_group_context = req_info.rewrite_to .. "/"
+    if( tonumber(api_group_info.enable_rewrite) == 1) then
+        if ( req_info.path and req_info.path ~= "" ) then
+            if(not stringy.endswith(api_group_info.rewrite_to,"/")) then
+                req_info.path = api_group_info.rewrite_to .. "/" .. req_info.path
+            else
+                req_info.path = api_group_info.rewrite_to .. req_info.path
+            end
+        else
+            req_info.path = api_group_info.rewrite_to
         end
-
-        if(req_info.path and req_info.path ~= "") then
-            req_info.path = req_info.api_group_context .. req_info.path
+    else
+        if ( req_info.path and req_info.path ~= "" ) then
+            if(not stringy.endswith(req_info.api_group_context,"/")) then
+                req_info.path = req_info.api_group_context .. "/" .. req_info.path
+            else
+                req_info.path = req_info.api_group_context .. req_info.path
+            end
         else
             req_info.path = req_info.api_group_context
         end

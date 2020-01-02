@@ -387,8 +387,8 @@ function api_route_handler:access()
         return
     end
 
-    -- path 加group context
-    req_var_extractor.deal_req_info_for_group_context(api_group_info,req_info)
+    -- generate upstream path, req_info.path append to group context or rewrite to
+    req_var_extractor.gen_upstream_req_info_for_group_context(api_group_info,req_info)
 
     -- 缓存api_group_id,cache_client
     ngx.var.api_router_group_id = api_group_info.id
