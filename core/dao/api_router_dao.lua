@@ -243,7 +243,7 @@ function _M.update_api_group(api_group,store)
     local sql = [[
         UPDATE c_api_group
             set group_name = ?, group_context = ?, upstream_domain_name = ?, upstream_service_id = ?, enable_balancing = ?,
-              need_auth    = ?, enable = ?, lb_algo = ?, host_id = ?, gen_trace_id = ?,enable_write = ?,rewrite_to = ?, updated_at = sysdate()
+              need_auth    = ?, enable = ?, lb_algo = ?, host_id = ?, gen_trace_id = ?,enable_rewrite = ?,rewrite_to = ?, updated_at = sysdate()
             where id = ?
     ]]
     local res = store:update({
