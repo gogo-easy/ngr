@@ -33,7 +33,7 @@ CREATE TABLE `c_api_group` (
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后更新时间',
   `host_id` int(12) NOT NULL,
   `gen_trace_id` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否生成全局id，1:是，0:否',
-  `enable_rewrite` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否重新上下文（1：重写，0：不重写）',
+  `enable_rewrite` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否重写上下文（1：重写，0：不重写）',
   `rewrite_to` varchar(250) DEFAULT NULL COMMENT '重写后的上下文PATH',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_host_group_context` (`host_id`,`group_context`)
