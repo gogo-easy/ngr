@@ -92,6 +92,9 @@ http {
     #最大等待任务数
     lua_max_pending_timers ${{LUA_MAX_PENDING_TIMERS}};
 
+    #prometheus metrics dict size
+    lua_shared_dict prometheus_metrics 100M;
+
 > if global_config_cache_data_size then
     #全局缓存字典定义
     lua_shared_dict global_config_cache_data ${{GLOBAL_CONFIG_CACHE_DATA_SIZE}};
@@ -146,14 +149,15 @@ http {
     init_by_lua_block {
         local app = require("core.main")
         local global_config_path = "${{ngr_conf}}"
-        local config, store,cache_client = app.init(global_config_path)
+        local config, store,cache_client,prometheus_metrics = app.init(global_config_path)
 
         --application context
         context = {
             app = app,
             store = store,
             cache_client = cache_client,
-            config = config
+            config = config,
+            prometheus_metrics = prometheus_metrics
         }
     }
 
@@ -181,6 +185,12 @@ server {
             ngx.header["Content-Type"] = "application/json; charset=utf-8"
             ngx.say(cjson.encode(resp))
             ngx.exit(ngx.HTTP_OK)
+        }
+    }
+
+    location = /metrics {
+        content_by_lua_block {
+            context.prometheus_metrics:metrics()
         }
     }
 
@@ -245,6 +255,7 @@ server {
                 ngx.exit(ngx.HTTP_OK)
             }
         }
+
 
         location / {
 

@@ -5,7 +5,7 @@
 ---
 
 local server = {}
-server.version = "1.0.3"
+server.version = "1.2.0-pre"
 server.name="NgrRouterAdmin"
 server.full_name = server.name .. "/" .. server.version
 

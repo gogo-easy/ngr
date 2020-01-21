@@ -322,6 +322,8 @@ function Ngr.init(global_conf_path)
         if app_context.config.application_conf.service_type == "gateway_service" then
             singletons.loaded_plugins = load_conf_plugin_handlers(app_context)
             singletons.healthcheckers = setmetatable({}, { __mode = "k" })
+            app_context.prometheus_metrics =  require("core.metrics.prometheus_utils")
+            app_context.prometheus_metrics:init()
         end
 
         ngx.update_time()
@@ -338,9 +340,10 @@ function Ngr.init(global_conf_path)
         start_time = app_context.config.ngr_start_at,
         profile = app_context.config.profile,
     	store = app_context.store,
-        cache_client  = app_context.cache_client
+        cache_client  = app_context.cache_client,
+        prometheus_metrics = app_context.prometheus_metrics,
 	}
-	return app_context.config,app_context.store,app_context.cache_client
+	return app_context.config,app_context.store,app_context.cache_client, app_context.prometheus_metrics
 end
 
 
@@ -492,6 +495,7 @@ function Ngr.log()
             keep_target_circuit_break_open_status(addr.group_id,addr.ip,addr.port)
         end
     end
+    Ngr.data.prometheus_metrics:log()
 end
 
 --[[

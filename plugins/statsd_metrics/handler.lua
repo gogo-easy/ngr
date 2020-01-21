@@ -167,7 +167,7 @@ function StatsdHandler:log()
     end
 end
 
--- shard free space 打点
+-- shard free space
 local function stats_shared_dict_free_space(logger)
     for _, name in pairs(shard_name) do
         local shard = new_shared[name]

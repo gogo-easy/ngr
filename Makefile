@@ -56,7 +56,7 @@ install-admin:
 	@echo "require(\"bin.api_main\")(arg)" >> $(DESTDIR)$(NGR_ADMIN_BIN)
 	@chmod +x $(DESTDIR)$(NGR_ADMIN_BIN)
 	@echo "NgRouter Admin API server had installed."
-	#$(DESTDIR)$(NGR_ADMIN_BIN) help
+	$(DESTDIR)$(NGR_ADMIN_BIN) help
 
 install:
 	@rm -rf $(DESTDIR)$(NGR_BIN)
@@ -97,7 +97,7 @@ install:
 	@echo "require(\"bin.main\")(arg)" >> $(DESTDIR)$(NGR_BIN)
 	@chmod +x $(DESTDIR)$(NGR_BIN)
 	@echo "NgRouter Gateway server had installed."
-	#$(DESTDIR)$(NGR_BIN) help
+	$(DESTDIR)$(NGR_BIN) help
 
 show:
 	$(DESTDIR)$(NGR_BIN) help
