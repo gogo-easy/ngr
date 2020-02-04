@@ -10,7 +10,7 @@ NgRouter是基于OpenResty开发的API网关，继承了Nginx的高并发、低�
 
 NgRouter is an enterprise-class API gateway based on Openresty. Compared to Openresty, it has almostly the same performance of high concurrency and low latency, it also has a lot of common practical functions such as authentication of requests, dynamically upstream lists, health check, rate limiting, fault torlerance,  etc. NgRouter can be deployed in single -node mode (usually for experiment), and can be scaled to multi-cluster mode, each cluster is dedicated for a logical environment. This makes it very suitable for the cases of multi-environment.
 
-更多关于NgRouter的详细介绍请参见[NgRouter Docs](https://github.com/gogo-easy/ngr/wiki)
+更多关于NgRouter的详细介绍请参见:[GITHUB WIKI](https://github.com/gogo-easy/ngr/wiki) | [码云文档](https://gitee.com/fijian/ngr/wikis/Home)
 
 ## 管理页面截图
 
@@ -66,7 +66,7 @@ NgRouter is an enterprise-class API gateway based on Openresty. Compared to Open
   
 ## How to use
 
-- [使用管理控制台](https://github.com/gogo-easy/ngrAdminPortal/wiki/Using-Guide)
+- 管理控制台使用说明文档见 [GITHUB](https://github.com/gogo-easy/ngrAdminPortal/wiki/Using-Guide) | [码云](https://gitee.com/fijian/ngrAdminPortal/wikis/Using-Guide?sort_id=1840263)
 
 ## Installation
 
@@ -78,7 +78,8 @@ NgRouter is an enterprise-class API gateway based on Openresty. Compared to Open
 
 ## Document
 
-- [WIKI](https://github.com/gogo-easy/ngr/wiki)
+- [GITHUB WIKI](https://github.com/gogo-easy/ngr/wiki)
+- [码云文档](https://gitee.com/fijian/ngr/wikis/Home)
 
 ## 贡献者
 
@@ -93,7 +94,7 @@ The project is licensed by [Apache 2.0](https://github.com/gogo-easy/ngr/blob/ma
 
 ## 管理控制台项目
 
-[ngrAdminPortal ](https://github.com/gogo-easy/ngrAdminPortal)
+[GITHUB Location](https://github.com/gogo-easy/ngrAdminPortal) | [码云地址](https://gitee.com/fijian/ngrAdminPortal)
 
 
 [ngr-logo]: ./logo/hoot1.png
