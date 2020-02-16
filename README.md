@@ -116,7 +116,6 @@ NGR网关一般以集群方式部署，一个NGR网关由多个NgRouter实例组
 The project is licensed by [Apache 2.0](https://github.com/gogo-easy/ngr/blob/master/LICENSE)
 
 ## Contact Us
-
 <table border="0">
     <tr>
         <td>微信交流群：微信群(加微信入群)</td>
@@ -126,7 +125,6 @@ The project is licensed by [Apache 2.0](https://github.com/gogo-easy/ngr/blob/ma
         <td><img title="微信交流群" src="./logo/chat-jacobs.png" height="200" width="220"/></td>
     </tr>
 </table>
-
 
 ## 管理控制台项目
 
