@@ -12,6 +12,30 @@ NgRouter is an enterprise-class API gateway based on Openresty. Compared to Open
 
 更多关于NgRouter的详细介绍请参见:[GITHUB WIKI](https://github.com/gogo-easy/ngr/wiki) | [码云文档](https://gitee.com/fijian/ngr/wikis/Home)
 
+## 架构图
+
+![arch](./logo/arch.png)
+
+### 组件
+
+- NGR-Gateway：NGR网关，属于逻辑概念，由多个NgRouter实例组成，实际流量由NgRouter实例处理
+- NgRouter：NgRouter实例，承载业务流量，根据路由规则、插件功能，完成业务流量的访问代理
+- Cluster：由多个NgRouter组成，同一个Cluster内的所有NgRouter实例共享同一份处理逻辑相同的网关配置
+- Log-Redis：以单例模式部署的Redis服务，全局唯一，存储网关的metrics信息
+- Config-DB：MySQL提供的配置持久化服务，全局唯一，存储网关的配置信息，如主机配置、路由配置、插件配置等
+- NGR-Admin：多网关集群的管理节点，全局唯一，暴露管理功能等API，提供集群配置的管理能力
+- NGR-Portal：多网关集群的图形化管理portal，详见[NgrAdminPortal项目](https://github.com/gogo-easy/ngrAdminPortal)
+
+### 架构说明
+
+**管理架构**
+
+NGR网关一般以集群方式部署，一个NGR网关由多个NgRouter实例组成。全局可以有多组NGR网关，即多个NgRouter集群。但所有NGR网关由全局唯一的一个NGR-Admin来管理，并向外暴露具有管理功能的API接口。通过管理接口，响应管理请求，从全局Config-DB中读取或写入网关配置，实现中心化的管理。出于管理端安全性的考虑，管理接口需通过BasicAuth方式认证访问。面向网关管理人员，[Gogoeasy](https://github.com/gogo-easy)团队默认提供一个[NGR-Portal](https://github.com/gogo-easy/ngrAdminPortal)作为NGR-Admin的图形化管理portal，提供网关配置的增删改查操作。其他使用本项目的第三方组织也可以根据API文档自行开发第三方管理工具。
+
+**工作机制**
+
+每个网关实例周期性向NGR-Admin发送心跳信息，NGR-Admin根据收到的心跳包，判定NgRouter的状态。默认心跳周期为3s。相同网关集群中的所有NGR-Gateway实例周期性拉取Config-DB中属于本网关的配置，并动态加载至内存中，默认配置加载周期为15s。每个NgRouter具备一个metrics模块，负责记录、统计处理信息及性能指标，Log-Redis用于缓存metrics信息。
+
 ## 管理页面截图
 
 ![preview](./logo/preview.png)
