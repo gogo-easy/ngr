@@ -106,10 +106,7 @@ NGR网关一般以集群方式部署，一个NGR网关由多个NgRouter实例组
 
 ## Developer
 
-- [@Fijian](https://github.com/jacobslei)
-- [@yearyeardiff](https://github.com/yearyeardiff)
-- [@wl4ever](https://github.com/wl4ever)
-- [@helicopter19](https://github.com/helicopter19)
+- [@SpringFuture](https://github.com/gogo-easy)
 
 ## License
 
