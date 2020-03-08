@@ -57,7 +57,7 @@ NGR网关一般以集群方式部署，一个NGR网关由多个NgRouter实例组
 
   网关支持upstream的服务注册发现，动态更新上游节点列表而无需重启服务，降低了网关的运维复杂度
 
-  支持多种负载均衡策略，如weighted round-robin, ip_hash等 
+  支持多种负载均衡策略，如weighted round-robin, IP hash等 
 
 - **服务治理能力**
 
@@ -110,7 +110,7 @@ NGR网关一般以集群方式部署，一个NGR网关由多个NgRouter实例组
 
 ## License
 
-The project is licensed by [Apache 2.0](https://github.com/gogo-easy/ngr/blob/master/LICENSE)
+The SpringFuture NgRouter is licensed by Apache 2.0. See the [LICENSE](./LICENSE) file for details.
 
 ## Contact Us
 <table border="0">
