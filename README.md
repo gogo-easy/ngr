@@ -2,7 +2,8 @@
 
 # NgRouter - A Pratical API Gateway
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/gogo-easy/ngr/blob/master/LICENSE) [![Version](https://img.shields.io/github/v/release/gogo-easy/ngr)](https://github.com/gogo-easy/ngr/releases)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/gogo-easy/ngr/blob/master/LICENSE) 
+[![Version](https://img.shields.io/github/v/release/gogo-easy/ngr)](https://github.com/gogo-easy/ngr/releases)        
 
 SpringFuture NgRouter是基于OpenResty开发的API网关，继承了Nginx的高并发、低延迟的强大性能的同时，也提供诸如认证鉴权、限流、熔断、健康检查、动态上游发现等常用功能。通过集群化横向扩展多实例的部署方式，可作为企业级边缘网关承载百万级并发，也可根据环境的逻辑划分，每个逻辑单元部署一套，用于需要多环境管理的场景。
 
@@ -119,7 +120,7 @@ The SpringFuture NgRouter is licensed by Apache 2.0. See the [LICENSE](./LICENSE
     </tr>
     <tr>&nbsp;</tr>
     <tr>
-        <td><img title="微信交流群" src="./logo/chat-jacobs.png" height="200" width="220"/></td>
+        <td><img title="微信交流群" src="./logo/chat-author1.png" height="200" width="220"/></td>
     </tr>
 </table>
 
