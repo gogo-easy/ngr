@@ -181,6 +181,10 @@ server {
             local resp = {}
             resp["status"] = "up"
             resp["server"] = server_info.full_name
+            local last_sync_time = server_info.last_sync_time
+            if last_sync_time ~= nil  then
+                resp["last_sync_time"] = last_sync_time
+            end
             ngx.header["Server"] = server_info.full_name
             ngx.header["Content-Type"] = "application/json; charset=utf-8"
             ngx.say(cjson.encode(resp))

@@ -1,6 +1,9 @@
 ---define cache prefix for using ngx.dict
-
 local prefix = {}
+
+
+---  server 基本信息
+prefix.server_info = "server_info_"
 
 --- api组配置数据前缀
 prefix.api_group = "api_group_"
