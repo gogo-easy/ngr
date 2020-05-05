@@ -181,7 +181,9 @@ server {
             local resp = {}
             resp["status"] = "up"
             resp["server"] = server_info.full_name
-            local last_sync_time = server_info.last_sync_time
+            local ngr_cache = require("core.cache.local.global_cache_util")
+            local ngr_cache_prefix = require("core.cache.local.global_cache_prefix")
+            local last_sync_time =  ngr_cache.get(ngr_cache_prefix.server_info .. "last_sync_time")
             if last_sync_time ~= nil  then
                 resp["last_sync_time"] = last_sync_time
             end
