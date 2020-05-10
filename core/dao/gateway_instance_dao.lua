@@ -62,7 +62,13 @@ end
 -- @param gateway_id
 -- @return a list of instances detail of the specified gateway_id, including gateway_id, address of instance, register_time, renew_time, status 
 -- field 'status' doesn't include in db, it depends on register interval, status=0 if current_time >= 2*register_interval + renew_time else status=1
-function _M.instances(gateway_id, store)
+function _M.instances_details_by_gwid(gateway_id, store)
+    local _,results,err = store.query({
+        sql = 'select id,gateway_id,address,renew_time,renew_time from c_gateway_instance where id = ?',
+        params = {
+            gateway_id
+        }
+    })
 end
 
 return _M
