@@ -40,6 +40,8 @@ local healthchecker_helper = require("core.router.healthcheck_helper")
 local init_healthchecker = healthchecker_helper.init_healthchecker
 local remove_healthchecker = healthchecker_helper.remove_healthchecker
 local keep_target_circuit_break_open_status = healthcheck_helper.keep_target_circuit_break_open_status
+local http_client = require("core.utils.http_client")
+local gateway_instance_dao = require("core.dao.gateway_instance_dao")
 
 
 -- Response Header definition
@@ -61,6 +63,10 @@ local Ngr = {}
 ---Get current time in ms
 local function now()
     return ngx.now() * 1000
+end
+
+local function get_local_addr()
+    return nil   
 end
 
 
@@ -132,6 +138,50 @@ local function init_hc()
         ngx_log(ERR,str_format(log_config.sys_error_format,log_config.ERROR,"[remove healthchecker error], error:".. debug_traceback(err)))
     end
     )
+end
+
+local function register2admin(premature, store, config)
+    if premature then
+        return
+    end
+    local worker_id = ngx.worker.id()
+    if worker_id == 0 then
+        local timer_interval = 10
+        ngx.log(ngx.DEBUG, "Ngr basic configuration data's initialization execute at workers[id=", worker_id,"]")
+        local start_time = ngx.now()
+        http_client:new()
+        local address = get_local_addr() or config.advertise_address
+        local req = {
+            uri = "http://"..config.admin_address.."/instance/register?service_name="..config.service_name,
+            headers = {
+                Authorization = "Basic YWRtaW46bmdyX2FkbWlu"
+            },
+            method = "GET"
+        }
+        local resp, err_msg = http_client:send(req)
+        if resp then
+            ngx.log(ngx.DEBUG, "response status is:"..resp.status)
+        else
+            ngx.log(ngx.DEBUG, "resp status is:"..resp.status..", err_msg is:"..err_msg)
+        end
+        local end_time = ngx.now()
+        local latency = end_time - start_time
+        if latency > timer_interval then
+            ngx_log(ERR,str_format(log_config.sys_error_format,log_config.WARN,
+                    "[register2admin] worker["..worker_id.."]  register latency is   ".. latency .." seconds"))
+        end
+        local ok, err = timer_at(timer_interval, register2admin, store,config);
+        if not ok then
+            ngx_log(ERR,str_format(log_config.sys_error_format,log_config.ERROR,"[register2admin] worker["..worker_id.."]  register2admin timer failed:".. err))
+            return
+        end
+    end
+end
+
+local function check_timeout_intance(premature, store, config)
+    if premature then
+        return
+    end
 end
 
 ---
@@ -302,8 +352,15 @@ local function init_worker_timer(premature, store, config,cache)
     load_plugin_config_data_timer(premature,store, config)
     load_ext_config_data_timer(premature,store,config,cache)
     execute_plugin_init_worker()
+    register2admin(premature, store, config)
 end
 
+local function init_config_server_timer(premature, store, config)
+    if premature then
+        return
+    end
+    check_timeout_intance(premature, store, config)
+end
 
 ---- NGR  core applicaition  initializing is beginning ---------
 --[[application initialize configuration
@@ -375,6 +432,17 @@ function Ngr.initWorker()
     if Ngr.data  then
         local timer_delay = Ngr.data.config.load_conf_delay or 0
         local ok, err = timer_at(timer_delay, init_worker_timer,Ngr.data.store, Ngr.data.config,Ngr.data.cache_client)
+        if not ok then
+            ngx_log(ERR,str_format(log_config.sys_error_format,log_config.ERROR,"Ngr workers failed to create loading configuration timer: "..err))
+            return os.exit(1)
+        end
+    end
+end
+
+function Ngr.initConfigServer()
+    if Ngr.data  then
+        local timer_delay = Ngr.data.config.load_conf_delay or 0
+        local ok, err = timer_at(timer_delay, init_config_server_timer,Ngr.data.store, Ngr.data.config,Ngr.data.cache_client)
         if not ok then
             ngx_log(ERR,str_format(log_config.sys_error_format,log_config.ERROR,"Ngr workers failed to create loading configuration timer: "..err))
             return os.exit(1)

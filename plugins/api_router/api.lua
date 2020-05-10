@@ -11,6 +11,8 @@ local c_host_dao = require("core.dao.host_dao")
 local gray_divide_dao = require("core.dao.gray_divide_dao")
 local selector_dao = require("core.dao.selector_dao")
 local condition_dao = require("core.dao.selector_condition_dao")
+local gateway_instance_dao = require("core.dao.gateway_instance_dao")
+local var_extractor = require("core.req.req_var_extractor")
 local xpcall = xpcall
 local cjson = require("cjson")
 
@@ -1105,6 +1107,31 @@ api:post("/api_router/add_target_list",function (store)
     end
 end)
 
+api:get("/instance/register", function (store)
+    return function(req, res, next)
+        -- logging
+        local gateway_code = req.query.service_name
+        local address = var_extractor.extract_IP()
+        api:print_req_log("[instance_register] gateway_code is:"..gateway_code..", instance_address is:"..address, req)
+        local is_ok, results = c_gateway_dao.query_gateway_by_code(gateway_code, store) 
+        if is_ok then
+            local gateway_id = results[1].id
+            api:print_req_log("[debug_in_gateway_dao] result is:"..gateway_id, req)
+            gateway_instance_dao.register_renew_instance(gateway_id, address, store)
+        end
+        return res:json({success = true})
+    end
+end)
 
+-- api:get("/instance/unregister", function (store))
+--     return function (req, res, next)
+--         -- logging
+--         api:print_req_log('instance_unregister', req)
+--         cluster_name = req.query.service_name
+--         address = req.query.address
+--         gateway_instance_dao.unregister_instance(cluster_name, address, store)
+--         return res:json({success = true})
+--     end
+-- end)
 
 return api
