@@ -1123,15 +1123,15 @@ api:get("/instance/register", function (store)
     end
 end)
 
--- api:get("/instance/unregister", function (store))
---     return function (req, res, next)
---         -- logging
---         api:print_req_log('instance_unregister', req)
---         cluster_name = req.query.service_name
---         address = req.query.address
---         gateway_instance_dao.unregister_instance(cluster_name, address, store)
---         return res:json({success = true})
---     end
--- end)
+api:get("/instance/unregister", function (store)
+    return function (req, res, next)
+        -- logging
+        local gateway_code = req.query.service_name
+        local address = var_extractor.extract_IP()
+        api:print_req_log("[instance_unregister] gateway_code is:"..gateway_code..", instance_address is:"..address, req)
+        gateway_instance_dao.unregister_instance(address, store)
+        return res:json({success = true})
+    end
+end)
 
 return api

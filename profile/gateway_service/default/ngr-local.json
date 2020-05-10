@@ -1,6 +1,7 @@
 {
   "profile": "local",
   "service_name":"GatewayService",
+  "admin_address": "127.0.0.1:7777",
   "cluster_node_count" : 1,
   "load_conf_delay" : 0,
   "load_conf_interval" : 3,

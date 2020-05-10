@@ -41,7 +41,6 @@ local init_healthchecker = healthchecker_helper.init_healthchecker
 local remove_healthchecker = healthchecker_helper.remove_healthchecker
 local keep_target_circuit_break_open_status = healthcheck_helper.keep_target_circuit_break_open_status
 local http_client = require("core.utils.http_client")
-local gateway_instance_dao = require("core.dao.gateway_instance_dao")
 
 
 -- Response Header definition

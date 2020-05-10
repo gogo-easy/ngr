@@ -6,6 +6,7 @@
 local API = {}
 local json = require("cjson")
 local gateway_dao = require("core.dao.gateway_dao")
+local gateway_instance_dao = require("core.dao.gateway_instance_dao")
 
 
 local function get_target(config,service_name)
@@ -41,12 +42,42 @@ local function get_target(config,service_name)
     end
     return targets
 end
+
+-- convert time from 'yyyy-mm-dd HH:MM:SS' to timestamp
+-- @param time_str, the format of time_str is 'yyyy-mm-dd HH:MM:SS'
+-- @return timestamp type int
+local function toTS(time_str)
+    local year = string.sub(time_str, 1, 4)
+    local month = string.sub(time_str, 6, 7)
+    local day = string.sub(time_str, 9, 10)
+    local hour = string.sub(time_str, 12, 13)
+    local min = string.sub(time_str, 15, 16)
+    local sec = string.sub(time_str, 18, 19)
+
+    return os.time({year=year, month=month, day=day, hour=hour, min=min, sec=sec})
+end
+
+local function is_health(instance, config)
+    local t_renew = toTS(instance.renew_time)
+    local t_now = os.time()
+    local interval = nil
+    if config then
+        interval = config.register_interval
+    else
+        interval = 10
+    end
+    if t_now > 2*interval + t_renew then
+        return false
+    end
+    return true
+end
+
 ---
 -- show all the dashboard statistics properties
 --
 API["/dashboard/show"] = {
     GET = function(store,cache_client,config)
-        return function(req, res, next)
+        return function(req, res, next, config)
             local flag,services = gateway_dao.query_gateway_code(store)
             local result={}
             if flag then
@@ -54,13 +85,39 @@ API["/dashboard/show"] = {
                 local stat_result = stat:stat(services)
 
                 if stat_result and stat_result.base_infos then
-                    --for _, base_info in ipairs(stat_result.base_infos) do
+                    -- for _, base_info in ipairs(stat_result.base_infos) do
                     --    local targets = get_target(config,base_info.service_name)
-                    --
+                    
                     --    if targets and #targets > 0 then
                     --        base_info.targets = string.gsub(json.encode(targets),"\"","")
                     --    end
-                    --end
+                    -- end
+                    local health_count = 0
+                    for _, base_info in ipairs(stat_result.base_infos) do
+                        local instances = gateway_instance_dao.instances(base_info.service_name, store)
+                        for _, instance in ipairs(instances) do
+                            instance.is_health = is_health(instance, config)
+                            instances[_] = instance
+                            if instance.is_health then
+                                health_count = health_count + 1
+                            end
+                        end
+                        local gateway_status = nil
+                        if health_count == #instances then
+                            -- all instances is healthy
+                            gateway_status = 1
+                        elseif health_count == 0 then
+                            -- none instance is healthy
+                            gateway_status = -1
+                        else
+                            -- some instances but not all is healthy
+                            gateway_status = 0
+                        end
+
+                        base_info.instances = instances 
+                        base_info.gateway_status = gateway_status
+                        stat_result.base_infos[_] = base_info
+                    end
                 end
 
                 return res:json({success=true,data=stat_result})
