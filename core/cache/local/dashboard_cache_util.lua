@@ -13,6 +13,7 @@ local cache = shared[shared_name.stat_dashboard]
 local _M = {}
 
 _M.DEFAULT_EXPIRE = 172800 -- 2 天，单位 s
+_M.NEVER_EXPIRE = 0
 
 
 function _M.add(key,value)
@@ -25,6 +26,10 @@ end
 
 function _M.set(key, value, expired)
     return cache:set(key, value, expired or 0)
+end
+
+function _M.keys()
+    return cache:get_keys()
 end
 
 function _M.incr(key,value,exptime)

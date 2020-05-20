@@ -20,8 +20,6 @@ local KEY_NGR_VERSION = KEY_PREFIX .. "NGR_VERSION"
 local KEY_NGINX_VERSION = KEY_PREFIX .. "NGINX_VERSION"
 local KEY_NGX_LUA_VERSION = KEY_PREFIX .. "NGX_LUA_VERSION"
 
-
-
 local KEY_TOTAL_COUNT = KEY_PREFIX .. "TOTAL_REQUEST_COUNT"
 local KEY_TOTAL_SUCCESS_COUNT = KEY_PREFIX .. "TOTAL_SUCCESS_REQUEST_COUNT"
 local KEY_TRAFFIC_READ = KEY_PREFIX .. "TRAFFIC_READ"
@@ -52,6 +50,18 @@ local function build_key(gateway_code, key, is_current_day)
         return gateway_code.."_"..key.."_"..current_day;
     else
         return gateway_code.."_"..key;
+    end
+end
+
+-- generate key for sample
+-- @param host_or_service_name
+-- @param metric_name
+-- @return pattern is 'SAMPLE:[${HOST}|${SERVICE_NAME}]:${METRIC_NAME}'
+local function build_key_for_sample(svc, host, key)
+    if host ~= nil then
+        return "SAMPLE:"..svc..":"..host.. ":"..key;
+    else
+        return "SAMPLE:"..svc..":"..key;
     end
 end
 
@@ -91,44 +101,122 @@ local function cal_increment(key)
     return value - last_value
 end
 
-local function to_storage(cache,service_name,part_key)
-    local key = build_key(service_name,part_key,true)
+local function to_storage(cache, key_name, part_key)
+    local key = build_key(key_name, part_key,true)
 
     local increment = cal_increment(key)
     if increment > 0 then
         cache_incrby(cache,key,increment)
         incrby(build_last_key(key),increment)
     end
+
 end
 
-local function save_log(premature, cache, log_data,service_name)
+local function startswith(str, sub_str)
+    local len = #sub_str
+    local tmp = string.sub(str, 1, len)
+    if tmp == sub_str then
+        return true
+    else
+        return false
+    end
+end
+
+local function flush_sample(cache)
+    local current_time = ngx.now()
+    local min_time = current_time - 24*60*60
+    ngx_log(ngx_debug, "[start to flush sample]")
+    local rem_keys, err = cache:zrangebyscore("SAMPLE:TS", "-inf", min_time)
+    cache:zremrangebyscore("sample_ts", "-inf", min_time)
+    for _, sample_key in pairs(dashboard_cache_util.keys()) do
+        if startswith(sample_key, "SAMPLE") then
+            local value = dashboard_cache_util.get(sample_key) or 0
+            ngx_log(ngx_debug, "[flush sample] value of "..sample_key.." is:"..value)
+            -- cache:zadd(sample_key, current_time, tostring(value).."_"..tostring(current_time))
+            -- cache:zremrangebyscore(sample_key, "-inf", min_time)
+            dashboard_cache_util.set(sample_key, 0, dashboard_cache_util.NEVER_EXPIRE)
+
+            cache:hset(sample_key, current_time, value)
+            if #rem_keys>0 then
+                local res, err = cache:hdel(sample_key, unpack(rem_keys))
+            end
+            if err or res==false then
+                ngx_log(ngx_debug, "[flush] hdel error")
+            end
+        end
+    end
+    cache:zadd("SAMPLE:TS", current_time, current_time)
+    ngx_log(ngx_debug, "[flush sample] flush finish")
+end
+
+local function save_log(premature, cache, log_data)
     if premature then
         return
     end
     local ok, e
     ok = xpcall(function()
+        local service_name = log_data.service_name
+        local host = log_data.host
 
         incr(build_key(service_name,KEY_TOTAL_COUNT,true))
+        incr(build_key_for_sample(service_name, host, KEY_TOTAL_COUNT))
+        incr(build_key_for_sample(service_name, nil, KEY_TOTAL_COUNT))
 
         local http_status = log_data.http_status
         ngx_log(ngx_debug, "stat dashboard log http_status.",http_status)
         if http_status < 400 then
             incr(build_key(service_name,KEY_TOTAL_SUCCESS_COUNT,true))
+            incr(build_key_for_sample(service_name, host, KEY_TOTAL_SUCCESS_COUNT))
+            incr(build_key_for_sample(service_name, nil, KEY_TOTAL_SUCCESS_COUNT))
+        else
+            incrby(build_key_for_sample(service_name, host, KEY_TOTAL_SUCCESS_COUNT), 0)
+            incrby(build_key_for_sample(service_name, nil, KEY_TOTAL_SUCCESS_COUNT), 0)
         end
         if http_status >= 200 and http_status < 300 then
             incr(build_key(service_name,KEY_REQUEST_2XX,true))
-        elseif http_status >= 300 and http_status < 400 then
+            incr(build_key_for_sample(service_name, host, KEY_REQUEST_2XX))
+            incr(build_key_for_sample(service_name, nil, KEY_REQUEST_2XX))
+        else
+            incrby(build_key_for_sample(service_name, host, KEY_REQUEST_2XX), 0)
+            incrby(build_key_for_sample(service_name, nil, KEY_REQUEST_2XX), 0)
+        end
+        if http_status >= 300 and http_status < 400 then
             incr(build_key(service_name,KEY_REQUEST_3XX,true))
-        elseif http_status >= 400 and http_status < 500 then
+            incr(build_key_for_sample(service_name, host, KEY_REQUEST_3XX))
+            incr(build_key_for_sample(service_name, nil, KEY_REQUEST_3XX))
+        else
+            incrby(build_key_for_sample(service_name, host, KEY_REQUEST_3XX), 0)
+            incrby(build_key_for_sample(service_name, nil, KEY_REQUEST_3XX), 0)
+        end
+        if http_status >= 400 and http_status < 500 then
             incr(build_key(service_name,KEY_REQUEST_4XX,true))
-        elseif http_status >= 500 and http_status < 600 then
-            ngx.log(ngx_debug, "stat dashboard log http_status.",http_status)
+            incr(build_key_for_sample(service_name, host, KEY_REQUEST_4XX))
+            incr(build_key_for_sample(service_name, nil, KEY_REQUEST_4XX))
+        else
+            incrby(build_key_for_sample(service_name, host, KEY_REQUEST_4XX), 0)
+            incrby(build_key_for_sample(service_name, nil, KEY_REQUEST_4XX), 0)
+        end
+        if http_status >= 500 and http_status < 600 then
             incr(build_key(service_name,KEY_REQUEST_5XX,true))
+            incr(build_key_for_sample(service_name, host, KEY_REQUEST_5XX))
+            incr(build_key_for_sample(service_name, nil, KEY_REQUEST_5XX))
+        else
+            incrby(build_key_for_sample(service_name, host, KEY_REQUEST_5XX), 0)
+            incrby(build_key_for_sample(service_name, nil, KEY_REQUEST_5XX), 0)
         end
         incrby(build_key(service_name,KEY_TRAFFIC_READ,true), log_data.request_length)
-        incrby(build_key(service_name,KEY_TRAFFIC_WRITE,true), log_data.bytes_sent)
+        incrby(build_key_for_sample(service_name, host, KEY_TRAFFIC_READ), log_data.request_length)
+        incrby(build_key_for_sample(service_name, nil, KEY_TRAFFIC_READ), log_data.request_length)
+
+        incrby(build_key(service_name,KEY_TRAFFIC_WRITE, true), log_data.bytes_sent)
+        incrby(build_key_for_sample(service_name, host, KEY_TRAFFIC_WRITE), log_data.bytes_sent)
+        incrby(build_key_for_sample(service_name, nil, KEY_TRAFFIC_WRITE), log_data.bytes_sent)
+
         ngx_log(ngx_debug,"request_time: ", log_data.request_time)
-        incrby(build_key(service_name,KEY_TOTAL_REQUEST_TIME,true), log_data.request_time)
+        incrby(build_key(service_name,KEY_TOTAL_REQUEST_TIME, true), log_data.request_time)
+        incrby(build_key_for_sample(service_name, host, KEY_TOTAL_REQUEST_TIME), log_data.request_time)
+        incrby(build_key_for_sample(service_name, nil, KEY_TOTAL_REQUEST_TIME), log_data.request_time)
+
         ngx_log(ngx_debug, "stat dashboard log successfully.")
     end, function()
         e = debug.traceback()
@@ -186,15 +274,16 @@ end
 function _M:log()
     local ngx_var = ngx.var
     local cache = self.cache
-    local service_name = self.service_name
     local log_data = {
+        service_name = self.service_name,
+        host = ngx_var.host,
         http_status = tonumber(ngx_var.status),
         request_length = ngx_var.request_length,
         bytes_sent = ngx_var.bytes_sent,
         -- convert to ms
         request_time = math.ceil((ngx.now() - ngx.req.start_time())*1000 )
     }
-    local ok, err = ngx.timer.at(0, save_log, cache, log_data,service_name)
+    local ok, err = ngx.timer.at(0, save_log, cache, log_data)
     if not ok then
         ngx_log(ERR,str_format(log_config.sys_error_format,log_config.ERROR,"stat_dashboard_handler's log handler".. err))
         return
@@ -285,7 +374,7 @@ function _M:init_worker_ext_timer()
     local service_name = self.service_name
     local total_count = cal_increment(build_key(self.service_name,KEY_TOTAL_COUNT,true))
     -- 大于则写入 redis
-    if total_count >= 60 then
+    -- if total_count >= 60 then
 
         to_storage(cache,service_name,KEY_TOTAL_COUNT)
 
@@ -304,7 +393,10 @@ function _M:init_worker_ext_timer()
         to_storage(cache,service_name,KEY_TRAFFIC_WRITE)
 
         to_storage(cache,service_name,KEY_TOTAL_REQUEST_TIME)
-    end
+
+    -- end
+
+    flush_sample(cache)
 end
 
 return _M

@@ -7,6 +7,7 @@ local API = {}
 local json = require("cjson")
 local gateway_dao = require("core.dao.gateway_dao")
 local gateway_instance_dao = require("core.dao.gateway_instance_dao")
+local cache_client = require("core.store.d_cache_client")
 
 
 local function get_target(config,service_name)
@@ -72,6 +73,98 @@ local function is_health(instance, config)
     return true
 end
 
+local function split(str, reps)
+    local resultStrList = {}
+    string.gsub(str, '[^'..reps..']+', function(w)
+        table.insert(resultStrList, w)
+    end)
+    return resultStrList
+end
+
+-- local function get_metrics(cache_client)
+--     local end_time = ngx.now()
+--     local start_time = end_time - 24*60*60
+--     local prefix = "SAMPLE:"
+--     local gateway = {}
+--     local gateway_host = {}
+--     local metric_name_list, err = cache_client:keys(prefix..'*:DASHBOARD*')
+--     if err ~= nil then
+--         ngx.log(ngx.INFO, "[get metrics] error is".. err)
+--         return gateway
+--     end
+--     for i = 1, #metric_name_list do
+--         local tmp = {}
+--         local metric_name = metric_name_list[i]
+--         ngx.log(ngx.INFO, "[dashboard metrics] metric name is:"..metric_name)
+--         local metric_samples = cache_client:zrangebyscore(metric_name, start_time, end_time) 
+
+--         local metric_name_table = split(metric_name, ':')
+--         if #metric_name_table == 4 then
+--             local prefix, gateway_code, host, dashboard_metric = table.unpack(metric_name_table)
+--             if gateway_host[dashboard_metric] == nil then
+--                 gateway_host[dashboard_metric] = {}
+--             end
+--             tmp[gateway_code..":"..host] = metric_samples
+--             table.insert(gateway_host[dashboard_metric], tmp)
+--         else
+--             local prefix, gateway_code, dashboard_metric = table.unpack(metric_name_table)
+--             if gateway[dashboard_metric] == nil then
+--                 gateway[dashboard_metric] = {}
+--             end
+--             tmp[gateway_code] = metric_samples
+--             table.insert(gateway[dashboard_metric], tmp)
+--         end
+--     end
+--     return gateway, gateway_host
+-- end
+
+-- return:
+-- {
+--     gateway = {
+--         metric1: [],
+--         metric2: []
+--     },
+--     gateway_host = {
+--         metric1: [],
+--         metric2: [],
+--     }
+-- }
+local function get_metrics(start_time, end_time, cache_client)
+    local prefix = "SAMPLE:"
+    local ts_key = "SAMPLE:TS"
+    local gateway = {}
+    local gateway_host = {}
+    local metric_name_list, err = cache_client:keys(prefix..'*:DASHBOARD*')
+    if err ~= nil then
+        ngx.log(ngx.INFO, "[get metrics] error is".. err)
+        return gateway
+    end
+    local ts_list, err = cache_client:zrangebyscore(ts_key, start_time, end_time)
+    for i = 1, #metric_name_list do
+        local tmp = {}
+        local metric_name = metric_name_list[i]
+        ngx.log(ngx.INFO, "[dashboard metrics] metric name is:"..metric_name)
+        local metric_samples = cache_client:hmget(metric_name, unpack(ts_list)) 
+
+        local metric_name_table = split(metric_name, ':')
+        if #metric_name_table == 4 then
+            local prefix, gateway_code, host, dashboard_metric = table.unpack(metric_name_table)
+            if gateway_host[dashboard_metric] == nil then
+                gateway_host[dashboard_metric] = {}
+            end
+            tmp[gateway_code..":"..host] = metric_samples
+            table.insert(gateway_host[dashboard_metric], tmp)
+        else
+            local prefix, gateway_code, dashboard_metric = table.unpack(metric_name_table)
+            if gateway[dashboard_metric] == nil then
+                gateway[dashboard_metric] = {}
+            end
+            tmp[gateway_code] = metric_samples
+            table.insert(gateway[dashboard_metric], tmp)
+        end
+    end
+    return gateway, gateway_host, ts_list
+end
 ---
 -- show all the dashboard statistics properties
 --
@@ -127,6 +220,27 @@ API["/dashboard/show"] = {
 
 
             res:json(result)
+        end
+    end
+}
+
+API["/dashboard/metrics"] = {
+    GET = function(store,cache_client,config)
+        return function(req, res, next, config)
+            local gateway_code = req.query.gateway_code or "*"
+            local host = req.query.host or "*"
+
+            -- range could be 1:last 1 hour, 2:last 2 hours, 4:last 4 hours, 
+            -- 6:last 6 hours, 12:last hours, 24:last 24 hours
+            -- default is 1
+            local range = req.query.range or 1 
+
+            local end_time = ngx.now()
+            local start_time = end_time - range*60*60
+
+            local gateway_metrics, host_metrics, ts_list = get_metrics(start_time, end_time, cache_client)
+
+            return res:json({success=true, data={gateway_metrics=gateway_metrics, host_metrics=host_metrics, ts=ts_list}})
         end
     end
 }
