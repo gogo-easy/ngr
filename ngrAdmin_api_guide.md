@@ -159,7 +159,7 @@ ngrouter后端存储了多个维度的metrics，如运行状态、实例状态�
 | ++ngr_version          | 是       | string      | ngr版本                                                      |
 | ++nginx_version        | 是       | string      | nginx版本                                                    |
 | ++ngx_lua_version      | 是       | string      | lua版本                                                      |
-| ++gateway_status       | 是       | int         | 网关状态                                                     |
+| ++gateway_status       | 是       | int         | 网关状态，1表示所有实例均online; 0表示有部分实例offline; -1表示所有实例均offline |
 | ++ngr_worker           | 是       | int         | 网关实例上的worker数                                         |
 | ++error_log_level      | 是       | string      | 日志级别：debug、warn、info、error                           |
 | ++instances            | 是       | string      | 网关实例信息                                                 |
