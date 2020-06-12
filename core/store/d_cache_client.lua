@@ -27,6 +27,135 @@ local function check_connect(redis)
     return true,nil
 end
 
+function cache:keys(pattern)
+
+    -- 1、connect 校验
+    local check_res,err = check_connect(self.redis)
+    if err then
+        return check_res,err;
+    end
+
+    -- 2、执行命令
+    local res,err = self.redis:exec(function (r)
+        return r:keys(pattern)
+    end)
+
+    -- 3、包装结果
+    if err then
+        return nil,err
+    else
+        return res,nil
+    end
+
+end
+
+--[[
+    功能：hset 函数，
+    key : 键
+    field: 字段
+    val : 值
+    return: 返回两个参数
+        res:true/false
+        err:错误信息
+]]
+function cache:hset(key, field, val)
+    -- 1、connect 校验
+    local check_res,err = check_connect(self.redis)
+    if err then
+        return check_res,err;
+    end
+    -- 2、执行命令
+    local res,err = self.redis:exec(function (r)
+        return r:hset(key, field, val)
+    end)
+    -- 3、包装结果
+    if err then
+        return false,err
+    else
+        return true,nil
+    end
+end
+
+--[[
+    功能：hget 函数，
+    key : 键
+    field: 字段
+    return: 返回两个参数
+        res: nil/value 返回空或对应的值
+        err:错误信息
+]]
+function cache:hget(key, field)
+    -- 1、connect 校验
+    local check_res,err = check_connect(self.redis)
+    if err then
+        return check_res,err;
+    end
+    -- 2、执行命令
+    local res,err = self.redis:exec(function (r)
+        return r:hget(key, field)
+    end)
+    -- 3、包装结果
+    if err then
+        return nil,err
+    else
+        return res,nil
+    end
+end
+
+--[[
+    功能：hmget 函数，
+    key : 键
+    ...: 字段列表
+    return: 返回两个参数
+        res: nil/value 返回空或对应的值
+        err:错误信息
+]]
+function cache:hmget(key, ...)
+    -- 1、connect 校验
+    local check_res,err = check_connect(self.redis)
+    if err then
+        return check_res,err;
+    end
+    -- 2、执行命令
+    local args = { ... }
+    local res,err = self.redis:exec(function (r)
+        return r:hmget(key, unpack(args))
+    end)
+    -- 3、包装结果
+    if err then
+        return nil,err
+    else
+        return res,nil
+    end
+end
+
+--[[
+    功能：hdel 函数，
+    key : 键
+    ...: 字段列表
+    return: 返回两个参数
+        res: true/false 返回空或对应的值
+        err:错误信息
+]]
+function cache:hdel(key, ...)
+    -- 1、connect 校验
+    local check_res,err = check_connect(self.redis)
+    if err then
+        return check_res,err;
+    end
+    -- 2、执行命令
+    local args = { ... }
+    local res,err = self.redis:exec(function (r)
+        return r:hdel(key, unpack(args))
+    end)
+    -- 3、包装结果
+    if err then
+        return false,err
+    else
+        return true,nil
+    end
+end
+
 --[[
     功能：set 函数，
     key : 键
@@ -1191,6 +1320,37 @@ function cache:zrange(key,start,stop,flag)
     end
 end
 
+--[[
+    zrangebyscore 返回有序集中，指定分数区间内的成员。
+           其中有序集成员按分数值递增(从小到大)顺序排列
+    参数：
+        key : 操作key
+        start : 下标起始值 例如：0 表示第1个元素
+        stop : 最大分数 例如： -1 表示最后一个元素
+        flag : true / false  是否返回scores； 默认为 false
+     return：返回两个值
+        res:nil / 指定区间内，带有分数值(可选)的有序集成员的列表。
+        err:错误信息
+]]
+function cache:zrangebyscore(key, ...)
+    -- 1. connection check
+    local check_res,err = check_connect(self.redis)
+    if err then
+        return nil, err;
+    end
+    local args = { ... }
+    -- 2. execution
+    local res, err = self.redis:exec(function (r)
+        return r:zrangebyscore(key, unpack(args))
+    end)
+
+    -- 3. decorate result
+    if err then
+        return nil, err
+    else
+        return res, nil
+    end
+end
 
 --[[
     zrevrange 命令返回有序集中，指定区间内的成员
@@ -1280,6 +1440,35 @@ function cache:zrem(key,...)
         return nil,err
     else
         return res,nil
+    end
+end
+
+--[[
+    zremrangebyscore 用于根据分数移除有序集中的多个成员
+    参数：
+        key : 操作key
+        ... : 分数范围：min, max
+     return：返回两个值
+        res:nil ／ 0 / 被成功移除的成员的数量
+        err:错误信息
+]]
+function cache:zremrangebyscore(key, ...)
+    -- 1. connection check
+    local check_res,err = check_connect(self.redis)
+    if err then
+        return nil, err;
+    end
+    local args = { ... }
+    -- 2. execution
+    local res, err = self.redis:exec(function (r)
+        return r:zremrangebyscore(key, unpack(args))
+    end)
+
+    -- 3. decorate result
+    if err then
+        return nil, err
+    else
+        return res, nil
     end
 end
 
