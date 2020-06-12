@@ -25,11 +25,11 @@ http {
 
     sendfile	on;
     tcp_nodelay on;
-    #tcp_nopush on;             # disabled until benchmarked
-    proxy_buffer_size 1600k;    # disabled until benchmarked
-    proxy_buffers 4 3200k;      # disabled until benchmarked
-    proxy_busy_buffers_size 6400k; # disabled until benchmarked
-    proxy_temp_file_write_size 6400k;
+    #tcp_nopush on;
+    proxy_buffer_size 64k;
+    proxy_buffers 32 64k;
+    proxy_busy_buffers_size 128k;
+    proxy_temp_file_write_size 64k;
     proxy_max_temp_file_size 128m;
 
     #reset_timedout_connection on; #disabled until benchmarked
